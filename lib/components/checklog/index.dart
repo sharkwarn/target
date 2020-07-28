@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import '../../utils/date.dart';
 
 class CheckLog extends StatelessWidget {
-  const CheckLog({
+  CheckLog({
     Key key,
+    this.checkTime,
+    this.remark,
+    this.isVacation
   }) : super(key: key);
+
+  final String checkTime;
+  final String remark;
+  final bool isVacation;
 
   @override
   Widget build(BuildContext context) {
@@ -14,14 +22,15 @@ class CheckLog extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Icon(
-              Icons.headset
+              isVacation ? Icons.sentiment_very_dissatisfied : Icons.sentiment_very_satisfied,
+              color: isVacation ? Colors.red : Colors.green 
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('小五'),
-                Text('2020-07-08 12:12')
+                Text(DateMoment.getDate(checkTime)),
+                Text(remark)
               ],
             ),
             Expanded(
@@ -29,9 +38,7 @@ class CheckLog extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Icon(
-                    Icons.comment
-                  )
+                  
                 ],
               ),
             )

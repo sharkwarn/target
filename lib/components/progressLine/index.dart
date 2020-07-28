@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ProgressLine extends StatelessWidget {
 
-  const ProgressLine({
+  ProgressLine({
     this.sum,
     this.current
   }) : super();
@@ -21,7 +21,7 @@ class ProgressLine extends StatelessWidget {
       decoration: new BoxDecoration(
         color: Colors.grey[200],
         borderRadius: new BorderRadius.all(
-          const Radius.circular(height),
+          Radius.circular(height),
         ), 
       ),
       child: new Row(
@@ -33,7 +33,7 @@ class ProgressLine extends StatelessWidget {
               decoration: new BoxDecoration(
                 color: Colors.lightGreen[600],
                 borderRadius: new BorderRadius.all(
-                  const Radius.circular(height),
+                  Radius.circular(height),
                 ), 
               ),
             )

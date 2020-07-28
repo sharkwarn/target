@@ -4,8 +4,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_picker/flutter_picker.dart';
+import '../../components/tapBox/index.dart';
 
 import '../../globalData/index.dart';
+
+import '../../types/index.dart';
 
 
 class CreateTask extends StatefulWidget {
@@ -27,10 +31,34 @@ class _CreateTask extends State {
   int dayofftaken;
 
   // 罚金模式
-  bool isfine = false;
+  bool isfine = true;
 
   // 罚金金额
   double fine;
+
+  // 标签ID
+  int tag;
+
+  // 标签文本
+  String tagText;
+
+  List tags = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getList();
+  }
+
+  _getList() async {
+    print('重新加载数据');
+    final _lists = await GlobalData.getTagsList();
+    print(_lists);
+    final lists = _lists.map((item)=>Tag.fromMap(item)).toList();
+    setState(() {
+      tags = lists;
+    });
+  }
 
 
   final _formKey = GlobalKey<FormState>();
@@ -43,12 +71,40 @@ class _CreateTask extends State {
       holidayDays,
       dayofftaken,
       isfine,
-      fine
+      fine,
+      tag
     );
     print('结果');
     if (res) {
       Navigator.pop(context, 'create');
     }
+  }
+
+  showPickerNumber(BuildContext context) {
+    Picker(
+        adapter: PickerDataAdapter(
+          pickerdata: tags.map((item) {
+            return item.name;
+          }).toList(),
+        ),
+        changeToFirst: false,
+        textAlign: TextAlign.left,
+        textStyle: const TextStyle(color: Colors.blue),
+        selectedTextStyle: TextStyle(color: Colors.red),
+        columnPadding: const EdgeInsets.all(8.0),
+        cancelText: '取消',
+        confirmText: '确定',
+        onConfirm: (Picker picker, List value) {
+          int index = value[0];
+          final Tag item = tags[index];
+          print(item.id);
+          setState(() {
+            tag = item.id;
+            print(tag);
+            tagText = item.name;
+          });
+        }
+    ).showModal(context);
   }
 
   @override
@@ -184,6 +240,15 @@ class _CreateTask extends State {
                                   onSaved: (val) {
                                     holidayDays = int.parse(val);
                                   },
+                                )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                                child: TapBox(
+                                  onTap: () {
+                                    showPickerNumber(context);
+                                  },
+                                  child: Text(tagText != null ? tagText :'选择标签')
                                 )
                               ),
                               MergeSemantics(

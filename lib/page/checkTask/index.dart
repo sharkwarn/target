@@ -4,9 +4,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import 'package:flutter/services.dart';
+import '../../globalData/index.dart';
 
 
 class CheckTask extends StatefulWidget {
+
   _CheckTask createState() => new _CheckTask();
 }
 
@@ -14,7 +16,23 @@ class _CheckTask extends State {
   int count = 0;
   bool needPay = false;
   String _selection = 'check';
+  String remark= '';
   final _formKey = GlobalKey<FormState>();
+
+  _submit () async {
+    bool isVacation = _selection != 'check';
+    final params = {
+      'checkTime':  DateTime.now().toString(),
+      'isVacation': isVacation,
+      'remark': remark
+    };
+    int id = ModalRoute.of(context).settings.arguments;
+    final bool res = await GlobalData.addChecklog(id, params);
+    if (res) {
+      Navigator.pop(context, true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -60,14 +78,14 @@ class _CheckTask extends State {
                                   keyboardType: TextInputType.multiline,
                                   maxLines: 10,
                                   decoration: const InputDecoration(
-                                    hintText: '目标完成天数',
+                                    hintText: '请输入内容',
                                     border: InputBorder.none,
                                   ),
                                   validator: (value) {
-                                    if (value.isEmpty) {
-                                      return '请输入完成天数';
-                                    }
                                     return null;
+                                  },
+                                  onSaved: (val) {
+                                    remark = val;
                                   },
                                 )
                               ),
@@ -92,6 +110,8 @@ class _CheckTask extends State {
                   onPressed: (){
                     if (_formKey.currentState.validate()) {
                       // Process data.
+                      _formKey.currentState.save();
+                      _submit();          
                     }
                   },
                   pressedOpacity: 0.7,

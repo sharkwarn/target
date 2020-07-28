@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 
 class TapBox extends StatefulWidget{
-  const TapBox({
+  TapBox({
     Key key,
     this.active: false,
     this.child,

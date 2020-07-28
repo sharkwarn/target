@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import '../tapBox/index.dart';
-
 import '../progressLine/index.dart';
+
+import '../../utils/colorsUtil.dart';
+
+import '../../types/index.dart';
 
 
 class ListTaskItem extends StatefulWidget {
 
-  const ListTaskItem({
+  ListTaskItem({
     Key key,
     this.title,
     this.allDays,
     this.holidayDays,
     this.dayofftaken,
     this.onTap,
+    this.tagInfo,
   }) : super(key: key);
 
   final String title;
@@ -25,6 +29,8 @@ class ListTaskItem extends StatefulWidget {
   final int dayofftaken;
   
   final GestureTapCallback onTap;
+
+  final Tag tagInfo;
 
   @override
   _ListTaskItem createState() => _ListTaskItem();
@@ -50,6 +56,8 @@ class _ListTaskItem extends State<ListTaskItem> {
     final int dayofftaken = widget.dayofftaken;
     final int surplusDay = holidayDays - dayofftaken;
     final double marginBottom = 10;
+    String tagName = widget?.tagInfo?.name;
+    String tagColor = widget?.tagInfo?.color;
     return new Container(
       padding: EdgeInsets.fromLTRB(0, 4.0, 0, 4.0),
       child: new Card(
@@ -106,26 +114,26 @@ class _ListTaskItem extends State<ListTaskItem> {
                 new Container(
                   height: marginBottom,
                 ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    new Text('围观'),
-                    new Container(),
-                    new CupertinoButton(
-                      color: Colors.red,
-                      minSize: 1,
-                      padding: EdgeInsetsDirectional.fromSTEB(6, 1, 6, 1),
-                      borderRadius: BorderRadius.all(Radius.circular(14.0)),
-                      onPressed: _setData,
-                      child: Text(
-                        "签到",
-                        style: TextStyle(
-                          fontSize: 14
+                Offstage(
+                  offstage: tagName == null,
+                  child: Container(
+                    child: Row(children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.fromLTRB(3, 1, 3, 1),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: tagColor != null ? ColorsUtil.hexStringColor(tagColor) : Colors.white,
                         ),
-                      ),
-                    )
-                  ],
-                )
+                        child: Text(
+                          tagName == null ? '' : tagName,
+                          style: TextStyle(
+                            color: Colors.white
+                          )
+                        )
+                      )
+                    ],)
+                  ),
+                ),
               ],
             )
           )

@@ -1,6 +1,3 @@
-
-
-
 class TypesTask {
 
   // id
@@ -14,6 +11,9 @@ class TypesTask {
 
   // 创建日期
   String dateCreated;
+
+  // 分类
+  int tag;
 
   //总日期
   int allDays;
@@ -39,12 +39,18 @@ class TypesTask {
   // 状态
   String status;
 
+  // 最后一次更新时间
+  String lastUpdate;
+
+  Tag tagInfo;
+
   TypesTask.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     title= map['title'];
     target= map['target'];
     dateCreated= map['dateCreated'];
     allDays= map['allDays'];
+    tag = map['tag'];
     holidayDays= map['holidayDays'];
     dayofftaken= map['dayofftaken'];
     isfine= map['isfine'];
@@ -53,6 +59,7 @@ class TypesTask {
     final checks = List.from(map['checklogs']);
     checklogs= checks.map((item)=>TypesCheckLog.fromMap(item)).toList();
     status= map['status'];
+    tagInfo = map['tagInfo'] != null ? Tag.fromMap(map['tagInfo']) : null;
   }
 }
 
@@ -71,16 +78,12 @@ class TypesCheckLog {
   // 是否休假
   bool isVacation;
 
-  // 上传照片
-  List<String> imgs;
-
   // 评论
   List<TypesCommet> commet;
   TypesCheckLog.fromMap(Map<String, dynamic> map) {
     checkTime = map['checkTime'];
     remark = map['remark'];
     isVacation = map['isVacation'];
-    imgs = map['imgs'];
   }
 }
 
@@ -98,3 +101,20 @@ abstract class TypesCommet {
   // 评论内容
   String commet;
 }
+
+
+
+class Tag {
+  int id;
+
+  String name;
+
+  String color;
+  
+  Tag.fromMap(Map<String, dynamic> map) {
+    id = map['id'];
+    name = map['name'];
+    color = map['color'];
+  }
+}
+

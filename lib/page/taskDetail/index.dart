@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import '../../components/taskDetail/index.dart';
 import '../../components/checklog/index.dart';
-import '../../mock/index.dart';
 import '../../globalData/index.dart';
+import '../../types/index.dart';
+import '../../utils/date.dart';
 
 class TaskDetail extends StatefulWidget {
   _TaskDetail createState() => new _TaskDetail();
@@ -14,112 +15,148 @@ class TaskDetail extends StatefulWidget {
 class _TaskDetail extends State {
   int count = 0;
 
+  bool _change = false;
+
+  TypesTask detail;
+
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      int id = ModalRoute.of(context).settings.arguments;
-      print(id);
-      _getDetail(id);
+      _getDetail();
     });
   }
 
-  _getDetail(id) async {
-    var detail = await GlobalData.getDetail(id);
-    print('找到了');
-    print(detail);
+  _getDetail() async {
+    int id = ModalRoute.of(context).settings.arguments;
+    final _detail = await GlobalData.getDetail(id);
+    setState(() {
+      detail = TypesTask.fromMap(_detail);
+    });
   }
 
+  _reload() {
+    _getDetail();
+    setState(() {
+      _change = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> lists = [];
+    if (detail == null) {
+      return Container();
+    }
+    List<Widget> lists = [];
     lists.add(
       new Container(
         child: new Column(
           children: <Widget>[
             Container(
-              child: new TaskDetail1()
+              child: new TaskDetail1(
+                id: detail.id,
+                title: detail.title,
+                target: detail.target,
+                dateCreated: detail.dateCreated,
+                allDays: detail.allDays,
+                holidayDays: detail.holidayDays,
+                dayofftaken: detail.dayofftaken,
+                isfine: detail.isfine,
+                fine: detail.fine,
+                supervisor: detail.supervisor,
+                checklogs: detail.checklogs,
+                status: detail.status,
+                lastUpdate: detail.lastUpdate,
+                reload: () {
+                  _reload();
+                }
+              )
             ),
           ],
         )
       )
     );
-    lists.add(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text('头像'),
-              Text('sara')
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Text('报酬'),
-              Text('¥1.00'),
-              Icon(
-                Icons.settings
-              )
-            ],
-          )
-        ],
-      )
-    );
-    lists.add(
-      Container(
-        color: Colors.green,
-        margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
-        child: Card(
-          child: Row(
-            children: <Widget>[
-              Icon(
-                Icons.headset
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text('小五'),
-                  Text('2020-07-08 12:12')
-                ],
-              ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+    String nowTime = DateTime.now().toString();
+    int isCheck;
+    if (detail.checklogs != null && detail.checklogs.length != 0) {
+      isCheck = DateMoment.getDayDifference(nowTime, detail.checklogs[0].checkTime);
+    }
+    if (isCheck != 0) {
+      lists.add(
+        Container(
+          color: Colors.green,
+          margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+          child: Card(
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.headset
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    CupertinoButton(
-                      color: Colors.red,
-                      minSize: 1,
-                      padding: EdgeInsetsDirectional.fromSTEB(6, 1, 6, 1),
-                      borderRadius: BorderRadius.all(Radius.circular(14.0)),
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('/checktask');
-                      },
-                      child: Text(
-                        "签到",
-                        style: TextStyle(
-                          fontSize: 14
-                        ),
-                      ),
-                    )
+                    Text('当前未签到'),
                   ],
                 ),
-              )
-            ],
-          ),
+                Expanded(
+                  flex: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      CupertinoButton(
+                        color: Colors.red,
+                        minSize: 1,
+                        padding: EdgeInsetsDirectional.fromSTEB(6, 1, 6, 1),
+                        borderRadius: BorderRadius.all(Radius.circular(14.0)),
+                        onPressed: () {
+                          int id = ModalRoute.of(context).settings.arguments;
+                          Navigator.of(context).pushNamed('/checktask', arguments: id).then((value) => {
+                            if (value == true) {
+                              _reload()
+                            }
+                          });
+                        },
+                        child: Text(
+                          "点击签到",
+                          style: TextStyle(
+                            fontSize: 14
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )
         )
-      )
-    );
-    DetailMock.checklogs.forEach((item) {
+      );
+    }
+    detail.checklogs.forEach((item) {
       lists.add(
-        CheckLog()
+        CheckLog(
+          checkTime: item.checkTime,
+          remark: item.remark,
+          isVacation: item.isVacation
+        )
       );
     });
+    lists.add(
+      Card(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text('创建时间' + DateMoment.getDate(detail.dateCreated))
+          ],
+        ),
+      )
+    );
     return new Scaffold(
         appBar: new AppBar(
+          leading: GestureDetector(child: Icon(Icons.arrow_back_ios),onTap: (){
+            Navigator.pop(context, _change);
+          }),
           title: new TextField(
             obscureText: false
           )
