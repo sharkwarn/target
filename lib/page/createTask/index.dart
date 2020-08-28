@@ -6,6 +6,9 @@ import 'package:flutter/Cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import '../../components/tapBox/index.dart';
+import '../../components/pageAnimation/index.dart';
+import '../../components/selectTags/index.dart';
+import '../../utils/colorsUtil.dart';
 
 import '../../globalData/index.dart';
 
@@ -42,6 +45,9 @@ class _CreateTask extends State {
   // 标签文本
   String tagText;
 
+  // 标签颜色
+  String tagColor;
+
   List tags = [];
 
   @override
@@ -50,10 +56,15 @@ class _CreateTask extends State {
     _getList();
   }
 
+  bool checkForm() {
+    if (title != null && target != null && allDays != null && holidayDays != null && fine != null && tag != null) {
+      return true;
+    }
+    return false;
+  }
+
   _getList() async {
-    print('重新加载数据');
     final _lists = await GlobalData.getTagsList();
-    print(_lists);
     final lists = _lists.map((item)=>Tag.fromMap(item)).toList();
     setState(() {
       tags = lists;
@@ -74,10 +85,21 @@ class _CreateTask extends State {
       fine,
       tag
     );
-    print('结果');
     if (res) {
       Navigator.pop(context, 'create');
     }
+  }
+
+  _showTags() {
+    Navigator.push(context, SlideTopRoute(page: SelectTags(hiddenAll: true))).then((value) {
+      if (value != null) {
+        setState(() {
+          tag = value.id;
+          tagText = value.name;
+          tagColor = value.color;
+        });
+      }
+    });
   }
 
   showPickerNumber(BuildContext context) {
@@ -97,10 +119,8 @@ class _CreateTask extends State {
         onConfirm: (Picker picker, List value) {
           int index = value[0];
           final Tag item = tags[index];
-          print(item.id);
           setState(() {
             tag = item.id;
-            print(tag);
             tagText = item.name;
           });
         }
@@ -109,6 +129,11 @@ class _CreateTask extends State {
 
   @override
   Widget build(BuildContext context) {
+    double itemHeight = 50;
+    final TextStyle fontStyle = TextStyle(
+      fontSize: 16,
+      color: Colors.black
+    );
     return new Scaffold(
         appBar: new AppBar(
           title: new Text('创建任务')
@@ -123,6 +148,318 @@ class _CreateTask extends State {
                   child: new ListView(
                     padding: const EdgeInsets.all(0),
                     children: <Widget>[
+                      new Container(
+                        padding: EdgeInsets.fromLTRB(12, 0, 8, 0),
+                        color: Colors.white,
+                        child: new Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                height: itemHeight,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      width: 1,
+                                      color: Color(0xffe5e5e5)
+                                    )
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      width: 100,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: Text(
+                                          '目标名称',
+                                          style: fontStyle,
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: TextFormField(
+                                          decoration: const InputDecoration(
+                                            hintText: '请输入目标名称',
+                                            border: InputBorder.none,
+                                          ),
+                                          // validator: (value) {
+                                          //   if (value.isEmpty) {
+                                          //     return '请输入目标名称';
+                                          //   }
+                                          //   return null;
+                                          // },
+                                          onSaved: (val) {
+                                            title = val;
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ),
+                              Container(
+                                height: itemHeight,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      width: 1,
+                                      color: Color(0xffe5e5e5)
+                                    )
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      width: 100,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: Text(
+                                          '天数',
+                                          style: fontStyle,
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: TextFormField(
+                                          inputFormatters: [
+                                            WhitelistingTextInputFormatter(RegExp("[0-9.]"))
+                                          ],
+                                          keyboardType: TextInputType.number,
+                                          decoration: const InputDecoration(
+                                            hintText: '请输入周期天数',
+                                            border: InputBorder.none,
+                                          ),
+                                          // validator: (value) {
+                                          //   if (value.isEmpty) {
+                                          //     return '请输入完成天数';
+                                          //   }
+                                          //   return null;
+                                          // },
+                                          onSaved: (val) {
+                                            allDays = int.parse(val);
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ),
+                              Container(
+                                height: itemHeight,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      width: 1,
+                                      color: Color(0xffe5e5e5)
+                                    )
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      width: 100,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: Text(
+                                          '休假天数',
+                                          style: fontStyle,
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: TextFormField(
+                                          inputFormatters: [
+                                            WhitelistingTextInputFormatter(RegExp("[0-9.]"))
+                                          ],
+                                          keyboardType: TextInputType.number,
+                                          decoration: const InputDecoration(
+                                            hintText: '希望休假天数',
+                                            border: InputBorder.none,
+                                          ),
+                                          // validator: (value) {
+                                          //   if (value.isEmpty) {
+                                          //     return '请输入休假天数';
+                                          //   }
+                                          //   return null;
+                                          // },
+                                          onSaved: (val) {
+                                            holidayDays = int.parse(val);
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ),
+                              Container(
+                                height: itemHeight,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      width: 1,
+                                      color: Color(0xffe5e5e5)
+                                    )
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      width: 100,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: Text(
+                                          '押金',
+                                          style: fontStyle,
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: TextFormField(
+                                          inputFormatters: [
+                                            WhitelistingTextInputFormatter(RegExp("[0-9.]"))
+                                          ],
+                                          keyboardType: TextInputType.number,
+                                          decoration: const InputDecoration(
+                                            hintText: '金额',
+                                            border: InputBorder.none,
+                                          ),
+                                          // validator: (value) {
+                                          //   if (value.isEmpty) {
+                                          //     return '请输入金额';
+                                          //   }
+                                          //   return null;
+                                          // },
+                                          onSaved: (val) {
+                                            fine = double.parse(val);
+                                          },
+                                        )
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ),
+                              Container(
+                                height: itemHeight,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      width: 1,
+                                      color: Color(0xffe5e5e5)
+                                    )
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      width: 100,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: Text(
+                                          '目标',
+                                          style: fontStyle,
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: TextFormField(
+                                          decoration: const InputDecoration(
+                                            hintText: '目的',
+                                            border: InputBorder.none,
+                                          ),
+                                          // validator: (value) {
+                                          //   if (value.isEmpty) {
+                                          //     return '请输入目的';
+                                          //   }
+                                          //   return null;
+                                          // },
+                                          onSaved: (val) {
+                                            target = val;
+                                          },
+                                        )
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ),
+                              Container(
+                                height: itemHeight,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      width: 100,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: Text(
+                                          '所属分类',
+                                          style: fontStyle,
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                                        child: TapBox(
+                                          onTap: () {
+                                            _showTags();
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: <Widget>[
+                                              Container(
+                                                decoration: new BoxDecoration(
+                                                  color: tagColor != null ? ColorsUtil.hexStringColor(tagColor) : null,
+                                                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                    tagText != null ? 8 : 0,
+                                                    3, 8, 3
+                                                  ),
+                                                  child: Text(
+                                                    tagText != null ? tagText :'选择标签',
+                                                    style: TextStyle(
+                                                      color: tagColor != null ? Colors.white : Colors.grey,
+                                                      fontSize: 16
+                                                    )
+                                                  )
+                                                )
+                                              )
+                                            ],
+                                          )
+                                        )
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       new Container(
                         padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
                         margin: EdgeInsets.fromLTRB(0, 8, 0, 8),
@@ -160,9 +497,10 @@ class _CreateTask extends State {
                                 ],
                               ),
                               new Container(
-                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
-                                  child: new Text(
-                                  '任务一旦开始后不可以结束，其他一堆乱七八糟的，我爱我老婆，我做饭很难吃，超级难受。',
+                                width: double.infinity,
+                                margin: EdgeInsets.fromLTRB(0, 0, 0, 8),
+                                child: new Text(
+                                  '任务一旦开始后不可以结束.\n每天的签到时间是24:00之前，24:00之后会进行结算，\n任务完成后，押金将会从原来的支付方式返回。',
                                   textAlign: TextAlign.left,
                                   style: new TextStyle(
                                     fontSize: 12,
@@ -173,141 +511,6 @@ class _CreateTask extends State {
                           )
                         )
                       ),
-                      new Container(
-                        color: Colors.white,
-                        child: new Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                                child: TextFormField(
-                                  decoration: const InputDecoration(
-                                    hintText: '目标名称',
-                                    border: InputBorder.none,
-                                  ),
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return '请输入目标名称';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (val) {
-                                    title = val;
-                                  },
-                                )
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                                child: TextFormField(
-                                  inputFormatters: [
-                                    WhitelistingTextInputFormatter(RegExp("[0-9.]"))
-                                  ],
-                                  keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
-                                    hintText: '目标完成天数',
-                                    border: InputBorder.none,
-                                  ),
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return '请输入完成天数';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (val) {
-                                    allDays = int.parse(val);
-                                  },
-                                )
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                                child: TextFormField(
-                                  inputFormatters: [
-                                    WhitelistingTextInputFormatter(RegExp("[0-9.]"))
-                                  ],
-                                  keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
-                                    hintText: '希望休假天数',
-                                    border: InputBorder.none,
-                                  ),
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return '请输入休假天数';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (val) {
-                                    holidayDays = int.parse(val);
-                                  },
-                                )
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                                child: TapBox(
-                                  onTap: () {
-                                    showPickerNumber(context);
-                                  },
-                                  child: Text(tagText != null ? tagText :'选择标签')
-                                )
-                              ),
-                              MergeSemantics(
-                                child: ListTile(
-                                  title: Text('押金模式'),
-                                  trailing: CupertinoSwitch(
-                                    value: isfine,
-                                    onChanged: (bool value) { setState(() { isfine = value; }); },
-                                  ),
-                                  onTap: () { setState(() { isfine = !isfine; }); },
-                                ),
-                              ),
-                              Offstage(
-                                offstage: !isfine,
-                                child: new Padding(
-                                  padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                                  child: TextFormField(
-                                    inputFormatters: [
-                                      WhitelistingTextInputFormatter(RegExp("[0-9.]"))
-                                    ],
-                                    keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(
-                                      hintText: '金额',
-                                      border: InputBorder.none,
-                                    ),
-                                    validator: (value) {
-                                      if (value.isEmpty) {
-                                        return '请输入金额';
-                                      }
-                                      return null;
-                                    },
-                                    onSaved: (val) {
-                                      fine = double.parse(val);
-                                    },
-                                  )
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                                child: TextFormField(
-                                  decoration: const InputDecoration(
-                                    hintText: '目的',
-                                    border: InputBorder.none,
-                                  ),
-                                  validator: (value) {
-                                    if (value.isEmpty) {
-                                      return '请输入目的';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (val) {
-                                    target = val;
-                                  },
-                                )
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -323,9 +526,9 @@ class _CreateTask extends State {
                   ),
                   color: Colors.blue,
                   onPressed: (){
-                    if (_formKey.currentState.validate()) {
+                    _formKey.currentState.save();
+                    if (checkForm()) {
                       // Process data.
-                      _formKey.currentState.save();
                       _submit();               
                     }
                   },

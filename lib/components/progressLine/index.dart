@@ -4,12 +4,15 @@ class ProgressLine extends StatelessWidget {
 
   ProgressLine({
     this.sum,
-    this.current
+    this.current,
+    this.color
   }) : super();
 
   final int sum;
 
   final int current;
+
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +34,15 @@ class ProgressLine extends StatelessWidget {
             child: new Container(
               height: height,
               decoration: new BoxDecoration(
-                color: Colors.lightGreen[600],
+                color: color,
                 borderRadius: new BorderRadius.all(
                   Radius.circular(height),
-                ), 
+                ),
+                // gradient: LinearGradient(
+                //   colors: [Color(0xFFFFFFFF), Color(0xFF00FFFF)],
+                //   tileMode: TileMode.repeated
+                // )
+
               ),
             )
           ),

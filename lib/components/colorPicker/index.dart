@@ -54,7 +54,9 @@ class _ColorPicker extends State<ColorPicker> {
         onTap: () {
           setState(() {
             color = _color;
-            widget.onChange(color);
+            if (widget.onChange != null) {
+              widget.onChange(color);
+            }
           });
         },
       );

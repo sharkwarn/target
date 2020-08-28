@@ -36,7 +36,6 @@ class ListTaskItem extends StatefulWidget {
   _ListTaskItem createState() => _ListTaskItem();
 }
 
-
 class _ListTaskItem extends State<ListTaskItem> {
 
   @override
@@ -55,64 +54,99 @@ class _ListTaskItem extends State<ListTaskItem> {
     final int holidayDays = widget.holidayDays;
     final int dayofftaken = widget.dayofftaken;
     final int surplusDay = holidayDays - dayofftaken;
-    final double marginBottom = 10;
     String tagName = widget?.tagInfo?.name;
     String tagColor = widget?.tagInfo?.color;
     return new Container(
-      padding: EdgeInsets.fromLTRB(0, 4.0, 0, 4.0),
       child: new Card(
+        elevation: 10,
+        margin: EdgeInsets.fromLTRB(0, 8, 0, 8),
+        color: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        ),
         child: new TapBox(
           onTap: () {
             widget.onTap();
           },
           child: new Container(
-            padding: new EdgeInsets.all(16.0),
+            padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
             child: new Column(
               children: <Widget>[
-                new Row(
-                  children: <Widget>[
-                    new Container(
-                      child: new Text(
-                        title,
-                        style: new TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.black,
+                Container(
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          child: new Text(
+                            title,
+                            style: new TextStyle(
+                              fontSize: 18.0,
+                              color: ColorsUtil.hexStringColor(tagColor),
+                            ),
+                          )
+                        ),
+                      ),
+                      Container(
+                        height: 80,
+                        width: 80,
+                        child: Icon(
+                          Icons.check_circle,
+                          color: ColorsUtil.hexStringColor(tagColor)
                         ),
                       )
-                    )
-                  ],
+                    ],
+                  ),
                 ),
-                new Container(
-                  height: marginBottom,
+                // ClipPath(
+                //   clipper: BorderBottom(),
+                //   child: Container(
+                //       width: double.infinity,
+                //       color: Colors.white,
+                //       height: 6,
+                //     ),
+                // ),
+                Container(
+                  color: ColorsUtil.hexStringColor(tagColor),
+                  height: 1,
                 ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    new Row(
-                      children: <Widget>[
-                        new Text('进度: '),
-                        new Text(allDays.toString())
-                      ]
-                    ),
-                    new Row(
-                      children: <Widget>[
-                        new Icon(
-                          Icons.timer
-                        ),
-                        new Text('剩余' + surplusDay.toString() + '天假期')
-                      ],
-                    )
-                  ],
+                Container(
+                  padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                  color: Colors.white,
+                  child: Column(
+                    children: <Widget>[
+                      new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          new Row(
+                            children: <Widget>[
+                              new Text('进度: '),
+                              new Text(allDays.toString())
+                            ]
+                          ),
+                          new Row(
+                            children: <Widget>[
+                              new Icon(
+                                Icons.timer
+                              ),
+                              new Text('剩余' + surplusDay.toString() + '天假期')
+                            ],
+                          )
+                        ],
+                      ),
+                    ]
+                  )
                 ),
-                new Container(
-                  height: marginBottom,
-                ),
-                new ProgressLine(
-                  sum: allDays,
-                  current: 1
-                ),
-                new Container(
-                  height: marginBottom,
+                Container(
+                  padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                  color: Colors.white,
+                  child: ProgressLine(
+                    sum: allDays,
+                    current: 2,
+                    color: ColorsUtil.hexStringColor(tagColor),
+                  )
                 ),
                 Offstage(
                   offstage: tagName == null,

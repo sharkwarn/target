@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import '../../components/taskDetail/index.dart';
 import '../../components/checklog/index.dart';
+import '../../components/progressCircle/index.dart';
 import '../../globalData/index.dart';
 import '../../types/index.dart';
 import '../../utils/date.dart';
+import '../../utils/colorsUtil.dart';
+import '../../components/timepipeline/index.dart';
 
 class TaskDetail extends StatefulWidget {
   _TaskDetail createState() => new _TaskDetail();
@@ -49,6 +52,18 @@ class _TaskDetail extends State {
     }
     List<Widget> lists = [];
     lists.add(
+      CustomPaint(
+        painter: ProgressCircle(
+          width: MediaQuery.of(context).size.width,
+          height: 200
+        ),
+        child: Container(
+          width: double.infinity,
+          height: 200
+        ),
+      )
+    );
+    lists.add(
       new Container(
         child: new Column(
           children: <Widget>[
@@ -67,6 +82,8 @@ class _TaskDetail extends State {
                 checklogs: detail.checklogs,
                 status: detail.status,
                 lastUpdate: detail.lastUpdate,
+                tagColor: ColorsUtil.hexStringColor(detail.tagInfo.color),
+                tagInfo: detail.tagInfo,
                 reload: () {
                   _reload();
                 }
@@ -82,54 +99,14 @@ class _TaskDetail extends State {
       isCheck = DateMoment.getDayDifference(nowTime, detail.checklogs[0].checkTime);
     }
     if (isCheck != 0) {
+      final List<String> date = nowTime.split(' ');
       lists.add(
-        Container(
-          color: Colors.green,
-          margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
-          child: Card(
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.headset
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text('当前未签到'),
-                  ],
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      CupertinoButton(
-                        color: Colors.red,
-                        minSize: 1,
-                        padding: EdgeInsetsDirectional.fromSTEB(6, 1, 6, 1),
-                        borderRadius: BorderRadius.all(Radius.circular(14.0)),
-                        onPressed: () {
-                          int id = ModalRoute.of(context).settings.arguments;
-                          Navigator.of(context).pushNamed('/checktask', arguments: id).then((value) => {
-                            if (value == true) {
-                              _reload()
-                            }
-                          });
-                        },
-                        child: Text(
-                          "点击签到",
-                          style: TextStyle(
-                            fontSize: 14
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          )
+        TimePipeline(
+          date: date[0],
+          time: '',
+          status: 'todo',
+          title: '今日未打卡',
+          remark: '记得打卡哦！',
         )
       );
     }
@@ -142,14 +119,67 @@ class _TaskDetail extends State {
         )
       );
     });
+    // if (isCheck != 0) {
+    //   lists.add(
+    //     Container(
+    //       color: Colors.green,
+    //       margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
+    //       child: Card(
+    //         child: Row(
+    //           children: <Widget>[
+    //             Icon(
+    //               Icons.headset
+    //             ),
+    //             Column(
+    //               mainAxisAlignment: MainAxisAlignment.start,
+    //               crossAxisAlignment: CrossAxisAlignment.start,
+    //               children: <Widget>[
+    //                 Text('当前未签到'),
+    //               ],
+    //             ),
+    //             Expanded(
+    //               flex: 1,
+    //               child: Row(
+    //                 mainAxisAlignment: MainAxisAlignment.end,
+    //                 children: <Widget>[
+    //                   CupertinoButton(
+    //                     color: Colors.red,
+    //                     minSize: 1,
+    //                     padding: EdgeInsetsDirectional.fromSTEB(6, 1, 6, 1),
+    //                     borderRadius: BorderRadius.all(Radius.circular(14.0)),
+    //                     onPressed: () {
+    //                       int id = ModalRoute.of(context).settings.arguments;
+    //                       Navigator.of(context).pushNamed('/checktask', arguments: id).then((value) => {
+    //                         if (value == true) {
+    //                           _reload()
+    //                         }
+    //                       });
+    //                     },
+    //                     child: Text(
+    //                       "点击签到",
+    //                       style: TextStyle(
+    //                         fontSize: 14
+    //                       ),
+    //                     ),
+    //                   )
+    //                 ],
+    //               ),
+    //             )
+    //           ],
+    //         ),
+    //       )
+    //     )
+    //   );
+    // }
+    final List<String> createDate = DateMoment.getDate(detail.dateCreated).split(' ');
+    final List<String> createTime = createDate[1].split('.');
     lists.add(
-      Card(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text('创建时间' + DateMoment.getDate(detail.dateCreated))
-          ],
-        ),
+      TimePipeline(
+        date: createDate[0],
+        time: createTime[0],
+        status: 'create',
+        title: '创建',
+        remark: '开始计划！',
       )
     );
     return new Scaffold(
@@ -157,9 +187,7 @@ class _TaskDetail extends State {
           leading: GestureDetector(child: Icon(Icons.arrow_back_ios),onTap: (){
             Navigator.pop(context, _change);
           }),
-          title: new TextField(
-            obscureText: false
-          )
+          title: Text('')
         ),
         body: Container(
           child: new ListView(

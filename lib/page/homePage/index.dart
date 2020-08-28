@@ -5,7 +5,8 @@ import '../../components/listTaskItem/index.dart';
 import '../../globalData/index.dart';
 import '../search/index.dart';
 import '../../types/index.dart';
-import '../tagsManage/index.dart';
+import '../../components/pageAnimation/index.dart';
+import '../../components/selectTags/index.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -23,7 +24,6 @@ class _HomePageState extends State<HomePage> {
 
   _getList() async {
     final _lists = await GlobalData.getList();
-    print(_lists);
     final lists = _lists.map((item) => TypesTask.fromMap(item)).toList();
     setState(() {
       _tasks = lists;
@@ -31,8 +31,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   _showTags() {
-    Navigator.push(
-        context, CupertinoPageRoute(builder: (context) => TagsManage()));
+    Navigator.push(context, SlideTopRoute(page: SelectTags())).then((value) {
+      if (value == '全部') {
+        _getList();
+      } else if (value != null) {
+        _fetchData(value.id);
+      }
+    });
+  }
+
+  Future _fetchData(int id) async {
+    final List _lists = await GlobalData.searchTags(id);
+    final lists = _lists.map((item)=>TypesTask.fromMap(item)).toList();
+    setState(() {
+      _tasks = lists;
+    });
   }
 
   @override
@@ -51,7 +64,6 @@ class _HomePageState extends State<HomePage> {
           dayofftaken: dayofftaken == null ? 0 : dayofftaken,
           tagInfo: tagInfo,
           onTap: () {
-            print(id);
             Navigator.of(context)
                 .pushNamed('/detail', arguments: id)
                 .then((value) => {
@@ -88,36 +100,42 @@ class _HomePageState extends State<HomePage> {
         )),
         body: new Column(
           children: <Widget>[
-            Stack(
-              children: <Widget>[Text('aaaa')],
-            ),
             new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  new CupertinoButton(
-                    child: new Text('排序'),
-                    onPressed: () {},
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(''),
+                TapBox(
+                  onTap:  () {
+                    _showTags();
+                  },
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(0, 4, 16, 4),
+                    child: new Text(
+                      '筛选',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.blue
+                      )
+                    )
                   ),
-                  new CupertinoButton(
-                    child: new Text('筛选'),
-                    onPressed: () {
-                      _showTags();
-                    },
-                  )
-                ]),
+                )
+              ]
+            ),
             new Expanded(
               flex: 1,
               child: new Container(
                 child: new ListView(
                   padding: const EdgeInsets.all(8),
-                  children: lists,
+                  children: lists.length > 0 ? lists : [
+                    Center(child: Text('没有数据'),)
+                  ],
                 ),
               ),
             )
           ],
         ),
         drawer: Drawer(
-            child: Container(
+          child: Container(
           padding: EdgeInsets.fromLTRB(0, 40, 0, 40),
           child: ListView(
             children: <Widget>[

@@ -44,7 +44,6 @@ class GlobalData {
       int allDays = detail['allDays'];
       while (x > 1) {
         if (holidayDays == 0) {
-            print('没有休假，任务失败');
             break;
         }
         lastUpdate.add(Duration(days: 1));
@@ -56,7 +55,6 @@ class GlobalData {
         x--;
         holidayDays--;
         if (detail['checklogs'].length == allDays) {
-            print('任务完成');
             break;
         }
       }
@@ -113,7 +111,7 @@ class GlobalData {
     ) async {
     final tasklist = await getList();
     final obj =  {
-      'id': tasklist.length >= 1 ? tasklist[tasklist.length - 1]['id'] + 1 : 0,
+      'id': tasklist.length >= 1 ? tasklist[0]['id'] + 1 : 0,
       'title': title,
       'target': target,
       'tag': tag,
@@ -140,7 +138,7 @@ class GlobalData {
     ) async {
     final tagsList = await getTagsList();
     final obj =  {
-      'id': tagsList.length >= 1 ? tagsList[tagsList.length - 1]['id'] + 1 : 0,
+      'id': tagsList.length >= 1 ? tagsList[0]['id'] + 1 : 0,
       'name': name,
       'color': color
     };
@@ -195,7 +193,6 @@ class GlobalData {
   }
 
   static save(params) async {
-    print(params);
     final SharedPreferences db = await _init();
     bool res = await db.setString('tasks', convert.jsonEncode(params));
     if (res) {
@@ -218,8 +215,9 @@ class GlobalData {
   }
 
   static clear() async {
-    bool res = await save([]);
-    return res;
+    // bool res = await save([]);
+    // clearTags();
+    return true;
   }
 
   static clearTags() async {
@@ -232,6 +230,19 @@ class GlobalData {
     final List result = list.where((item) {
       String title = item['title'];
       if (title.indexOf(query) > -1) {
+        return true;
+      } else {
+        return false;
+      }
+    }).toList();
+    return result;
+  }
+
+  static searchTags(int query) async {
+    final List list = await getList();
+    final List result = list.where((item) {
+      int tag = item['tag'];
+      if (tag == query) {
         return true;
       } else {
         return false;

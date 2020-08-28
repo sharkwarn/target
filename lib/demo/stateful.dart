@@ -22,7 +22,6 @@ class CountNum extends State {
             [
               RaisedButton(
                 onPressed: () {
-                  print('减1');
                   setState(() {
                     --this.count;
                   });
@@ -33,7 +32,6 @@ class CountNum extends State {
               RaisedButton(
                 child: new Text('+'),
                 onPressed: () {
-                  print('加1');
                   setState(() {
                     ++this.count;
                   });

@@ -30,7 +30,6 @@ class CountNum extends State {
     }
     texts.add(CupertinoButton(
       onPressed: () {
-        print('点击了');
         setState(() {
           this.count++;
         });

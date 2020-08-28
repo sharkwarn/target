@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/Cupertino.dart';
 import 'package:flutter_app2/globalData/index.dart';
+import '../progress/index.dart';
+
+import '../../utils/colorsUtil.dart';
 import '../../types/index.dart';
 
 class TaskDetail1 extends StatefulWidget {
@@ -18,7 +22,9 @@ class TaskDetail1 extends StatefulWidget {
     this.checklogs,
     this.status,
     this.lastUpdate,
-    this.reload
+    this.reload,
+    this.tagColor,
+    this.tagInfo
   }) : super(
     key: key
   );
@@ -36,6 +42,9 @@ class TaskDetail1 extends StatefulWidget {
   final List<TypesCheckLog> checklogs;
   final String status;
   final String lastUpdate;
+
+  final Color tagColor;
+  final Tag tagInfo;
 
   final reload;
 
@@ -75,6 +84,8 @@ class _TaskDetail extends State<TaskDetail1> {
 
   @override
   Widget build(BuildContext context) {
+    String tagName = widget?.tagInfo?.name;
+    String tagColor = widget?.tagInfo?.color;
     return new Column(
       children: <Widget>[
         Container(
@@ -90,14 +101,14 @@ class _TaskDetail extends State<TaskDetail1> {
                       child: Text(widget.title),
                     ),
                     Container(
-                      child: IconButton(
-                        icon: Icon(Icons.edit),
+                      child: CupertinoButton(
                         onPressed: () {
                           setState(() {
                             _editTitle = true;
                           });
                         },
-                      )
+                        child: Text('编辑'),
+                      ),
                     )
                 ],),
               ),
@@ -117,7 +128,8 @@ class _TaskDetail extends State<TaskDetail1> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),
-                                borderSide: BorderSide.none),
+                                borderSide: BorderSide.none
+                            ),
                           ),
                           onChanged: (value) {
                             this._editTitleText = value;
@@ -134,14 +146,14 @@ class _TaskDetail extends State<TaskDetail1> {
                       ),
                     ),
                     Container(
-                      child: IconButton(
-                        icon: Icon(Icons.save),
+                      child: CupertinoButton(
                         onPressed: () {
                           setState(() {
                             _editTitle = false;
                             _updateTask('title', _editTitleText);
                           });
                         },
+                        child: Text('保存'),
                       )
                     )
                 ],),
@@ -211,29 +223,117 @@ class _TaskDetail extends State<TaskDetail1> {
                     )
                 ],),
               ),
-              Container(
-                padding: EdgeInsets.fromLTRB(16, 5, 16, 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text('¥ ' + widget.fine.toString()),
-                          Text('挑战金')
-                        ]
+                          Container(
+                            height: 60,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Baseline(
+                                    baseline: 30,
+                                    baselineType: TextBaseline.alphabetic,
+                                    child: Text(
+                                      '第',
+                                      style: TextStyle(
+                                        textBaseline: TextBaseline.alphabetic,
+                                      ),
+                                    )
+                                  ),
+                                  Baseline(
+                                    baseline: 30,
+                                    baselineType: TextBaseline.alphabetic,
+                                    child: Text(
+                                      widget.checklogs.length.toString(),
+                                      style: TextStyle(
+                                        color: widget.tagColor,
+                                        fontSize: 30,
+                                        textBaseline: TextBaseline.alphabetic,
+                                      ),
+                                    )
+                                  ),
+                                  Baseline(
+                                    baseline: 30,
+                                    baselineType: TextBaseline.alphabetic,
+                                    child: Text(
+                                      '天',
+                                      style: TextStyle(
+                                        textBaseline: TextBaseline.alphabetic,
+                                      ),
+                                    )
+                                  ),
+                                ],
+                              ),
+                            )
+                          ),
+                          Container(
+                            height: 60,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text('¥ ' + widget.fine.toString()),
+                                      Text('挑战金')
+                                    ]
+                                  )
+                                ],
+                              ),
+                            )
+                          ),
+                          Container(
+                            height: 60,
+                            child: Center(
+                              child: Offstage(
+                                offstage: tagName == null,
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(3, 1, 3, 1),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: tagColor != null ? ColorsUtil.hexStringColor(tagColor) : Colors.white,
+                                  ),
+                                  child: Text(
+                                    tagName == null ? '' : tagName,
+                                    style: TextStyle(
+                                      color: Colors.white
+                                    )
+                                  )
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
                       )
                     ),
-                    Container(
-                      child: Column(
-                        children: <Widget>[
-                          Text(widget.checklogs.length.toString() + '/' + widget.allDays.toString()),
-                          Text('坚持天数')
-                        ]
-                      )
-                    )
-                  ],
-                )
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(8, 16, 8, 16),
+                      child: CircleProgressWidget(
+                        progress: Progress(
+                          backgroundColor: Colors.grey,
+                          value: widget.checklogs.length / widget.allDays,
+                          radius: MediaQuery.of(context).size.width * 0.20,
+                          completeText: "完成",
+                          color: Color(0xff46bcf6),
+                          strokeWidth: 4
+                        )
+                      ),
+                    ),
+                  )
+                ],
               ),
             ],
           ),

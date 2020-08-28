@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
-import '../../components/colorPicker/index.dart';
 import '../../globalData/index.dart';
 import '../../types/index.dart';
 import '../../utils/colorsUtil.dart';
+import '../../components/pageAnimation/index.dart';
+import './createTag/index.dart';
 
 
 
@@ -21,34 +22,14 @@ class _TagsManage extends State {
 
   List<Tag> tags = [];
 
-
-  final _formKey = GlobalKey<FormState>();
-
   @override
   initState() {
     super.initState();
     _getList();
   }
-
-  _submit() async {
-    print(1111);
-    print(name);
-    print(color);
-    final res = await GlobalData.addTag(
-      name, 
-      color
-    );
-    if (res) {
-      Navigator.pop(context);
-      _getList();
-    }
-  }
   
   _getList() async {
-    print('重新加载数据');
     final _lists = await GlobalData.getTagsList();
-    print(111111111);
-    print(_lists);
     final lists = _lists.map((item)=>Tag.fromMap(item)).toList();
     setState(() {
       tags = lists;
@@ -56,110 +37,44 @@ class _TagsManage extends State {
   }
 
   _createTag() async {
-    showGeneralDialog(
-      context: context,
-      pageBuilder: (context, anim1, anim2) {},
-      barrierColor: Colors.grey.withOpacity(.4),
-      barrierDismissible: true,
-      barrierLabel: "",
-      transitionDuration: Duration(milliseconds: 60),
-      transitionBuilder: (context, anim1, anim2, child) {
-        return Transform.scale(
-          scale: anim1.value,
-          child: AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius:
-                BorderRadius.all(Radius.circular(20))
-            ),
-            title: Center(
-              child: Text('创建标签'),
-            ),
-            content: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.95,
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: Column(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: ListView(
-                      children: <Widget>[
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  hintText: '标签名称',
-                                  border: InputBorder.none,
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return '请输入标签名称';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (val) {
-                                  name = val;
-                                },
-                              )
-                            ],
-                          ),
-                        ),
-                        ColorPicker(
-                          onChange: (val) {
-                            print(val);
-                            setState(() {
-                              print(val);
-                              color = val;
-                            });
-                          }
-                        )
-                      ]
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      CupertinoButton(
-                        child: Text('取消'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      CupertinoButton(
-                        child: Text('保存'),
-                        onPressed: (){
-                          if (_formKey.currentState.validate()) {
-                            // Process data.
-                            _formKey.currentState.save();
-                            _submit();
-                          }
-                        },
-                      )
-                    ],
-                  )
-                ]
-              ),
-            ),
-          ),
-        );
+    Navigator.push(context, SlideTopRoute(page: CreateTags())).then((value) => {
+      if (value == 'create') {
+        _getList()
       }
-    );
+    });
   }
 
-  
   @override
   Widget build(BuildContext context) {
     final List<Widget> lists = tags.map<Widget>((item) {
       final String name = item.name;
       final String color = item.color;
-      print('name:::::::::::::');
-      print(item);
-      return Card(
+      return Container(
+        width: MediaQuery.of(context).size.width * 0.50,
+        height: 64,
+        padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
         child: Container(
-          color: ColorsUtil.hexStringColor(color),
-          child: Text(name)
+          decoration: new BoxDecoration(
+            //背景
+            color: ColorsUtil.hexStringColor(color),
+            //设置四周圆角 角度
+            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+            //设置四周边框
+            // border: new Border.all(width: 1, color: Colors.red),
+          ),
+          height: 88,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                name,
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.white,
+                )
+              )
+            ],
+          ),
         )
       );
     }).toList();
@@ -169,7 +84,7 @@ class _TagsManage extends State {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(''),
-              Text('创建标签'),
+              Text('标签管理'),
               IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () {
@@ -179,7 +94,11 @@ class _TagsManage extends State {
             ],
           )
         ),
-        body: ListView(children: lists,)
+        body: ListView(children: <Widget>[
+          Wrap(
+            children: lists,
+          )
+        ],)
       );
   }
 }

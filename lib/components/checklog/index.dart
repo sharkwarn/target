@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../timepipeline/index.dart';
 import '../../utils/date.dart';
 
 class CheckLog extends StatelessWidget {
@@ -15,36 +16,15 @@ class CheckLog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.green,
-      margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
-      child: Card(
-        child: Row(
-          children: <Widget>[
-            Icon(
-              isVacation ? Icons.sentiment_very_dissatisfied : Icons.sentiment_very_satisfied,
-              color: isVacation ? Colors.red : Colors.green 
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(DateMoment.getDate(checkTime)),
-                Text(remark)
-              ],
-            ),
-            Expanded(
-              flex: 1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  
-                ],
-              ),
-            )
-          ],
-        ),
-      )
+    final String nowTime = DateMoment.getDate(checkTime);
+    final List<String> date = nowTime.split(' ');
+    final List<String> time = date[1].split('.');
+    return TimePipeline(
+      date: date[0],
+      time: time[0],
+      status: isVacation ? 'warn' : 'success',
+      title: isVacation ? '休假' : '打卡',
+      remark: remark,
     );
   }
 }

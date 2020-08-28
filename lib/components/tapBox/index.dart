@@ -47,11 +47,7 @@ class _TapBox extends State<TapBox> {
       onTapUp: _handleTapUp, 
       onTap: _handleTap,
       onTapCancel: _handleTapCancel,
-      child: new Container(
-        color: _highligth ? Colors.grey[50] : Colors.white,
-        padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
-        child: widget.child,
-      ),
+      child: widget.child,
     );
   }
 }
