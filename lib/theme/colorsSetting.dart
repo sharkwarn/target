@@ -136,6 +136,7 @@ class ThemeColors {
 final Map<String, Color> statusColors = {
   'sign': Color(0xFF4ACA6D),
   'holiday': Color(0xFFFD3204),
+  'autoHoliday': Color(0xFFFD3204),
   'nosign': Color(0xFFFD3204),
   'create': Colors.blue[600],
   'done': Color(0xFFFF9B00),
@@ -153,4 +154,5 @@ final Map<String, String> statusDesc = {
   'fail': '失败',
   'stop': '停止',
   'delete': '删除',
+  'autoHoliday': '休假',
 };
