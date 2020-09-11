@@ -10,7 +10,6 @@ class TimePipeline extends StatelessWidget{
     this.date,
     this.time,
     this.status,
-    this.title,
     this.remark
   }) : super(key: key);
 
@@ -19,8 +18,6 @@ class TimePipeline extends StatelessWidget{
   final String time;
 
   final String status;
-
-  final String title;
 
   final String remark;
 
@@ -103,7 +100,7 @@ class TimePipeline extends StatelessWidget{
                                           Container(
                                             margin: EdgeInsets.fromLTRB(0, 0, 0, 6),
                                             child: Text(
-                                              title,
+                                              statusDesc[status],
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 18,

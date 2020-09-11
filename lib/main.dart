@@ -42,8 +42,10 @@ class _App extends State<App> {
         noLogin = false;
       });
     } else {
-        startPage = false;
-        noLogin = true;
+        setState(() {
+          startPage = false;
+          noLogin = true;
+        });
     }
   }
 
@@ -54,7 +56,17 @@ class _App extends State<App> {
     }
 
     if (noLogin) {
-      return Login();
+      return MaterialApp(
+        title: 'Flutter Demo',
+        home: Login(
+          callBack: () {
+            setState(() {
+              startPage = false;
+              noLogin = false;
+            });
+          }
+        ),
+      );
     }
     return new MaterialApp(
       title: 'Flutter Demo',

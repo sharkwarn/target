@@ -1,7 +1,7 @@
 class TypesTask {
 
-  // id
-  int id;
+  // taskId
+  int taskId;
 
   // 任务目标
   String title;
@@ -34,7 +34,7 @@ class TypesTask {
   TypesSupervisor supervisor;
 
   // 打卡日志
-  List<TypesCheckLog> checklogs;
+  List<TypesLog> logs;
 
   // 状态
   String status;
@@ -42,10 +42,16 @@ class TypesTask {
   // 最后一次更新时间
   String lastUpdate;
 
+  // 今日的打卡状态
+  String currentStatus;
+
+  // 当前第几天
+  int currentDay;
+
   Tag tagInfo;
 
   TypesTask.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+    taskId = map['taskId'];
     title= map['title'];
     target= map['target'];
     dateCreated= map['dateCreated'];
@@ -54,12 +60,14 @@ class TypesTask {
     holidayDays= map['holidayDays'];
     dayofftaken= map['dayofftaken'];
     isfine= map['isfine'];
-    fine= map['fine'];
+    fine= double.parse(map['fine'].toString());
     supervisor= map['supervisor'];
-    final checks = List.from(map['checklogs']);
-    checklogs= checks.map((item)=>TypesCheckLog.fromMap(item)).toList();
+    final checks = List.from(map['logs'] != null ? map['logs'] : []);
+    logs = checks.map((item)=>TypesLog.fromMap(item)).toList();
     status= map['status'];
     tagInfo = map['tagInfo'] != null ? Tag.fromMap(map['tagInfo']) : null;
+    currentStatus = map['currentStatus'];
+    currentDay = map['currentDay'];
   }
 }
 
@@ -68,22 +76,22 @@ abstract class TypesSupervisor {
   String nickName;
 }
 
-class TypesCheckLog {
+class TypesLog {
   // 打卡时间
   String checkTime;
 
   // 备注
   String remark;
 
-  // 是否休假
-  bool isVacation;
+  // 状态类型
+  String type;
 
   // 评论
   List<TypesCommet> commet;
-  TypesCheckLog.fromMap(Map<String, dynamic> map) {
+  TypesLog.fromMap(Map<String, dynamic> map) {
     checkTime = map['checkTime'];
     remark = map['remark'];
-    isVacation = map['isVacation'];
+    type = map['type'];
   }
 }
 
@@ -105,14 +113,14 @@ abstract class TypesCommet {
 
 
 class Tag {
-  int id;
+  int tagId;
 
   String name;
 
   String color;
   
   Tag.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+    tagId = map['tagId'];
     name = map['name'];
     color = map['color'];
   }

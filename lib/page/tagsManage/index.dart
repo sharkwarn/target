@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
-import '../../globalData/index.dart';
 import '../../types/index.dart';
 import '../../utils/colorsUtil.dart';
 import '../../components/pageAnimation/index.dart';
 import './createTag/index.dart';
+import '../../utils/request/index.dart';
 
 
 
@@ -28,12 +28,15 @@ class _TagsManage extends State {
     _getList();
   }
   
-  _getList() async {
-    final _lists = await GlobalData.getTagsList();
-    final lists = _lists.map((item)=>Tag.fromMap(item)).toList();
-    setState(() {
-      tags = lists;
-    });
+  _getList() async {    
+    final result = await Request.post('http://127.0.0.1:7001/tag/getList', {});
+    if (result != null && result['success'] == true) {
+      final _lists = result['data'];
+      final lists = _lists.map<Tag>((item)=>Tag.fromMap(item)).toList();
+      setState(() {        
+        tags = lists;
+      });
+    }
   }
 
   _createTag() async {

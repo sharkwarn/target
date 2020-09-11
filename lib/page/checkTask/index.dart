@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import 'package:flutter/services.dart';
-import '../../globalData/index.dart';
+import '../../utils/request/index.dart';
 
 
 class CheckTask extends StatefulWidget {
@@ -13,23 +13,21 @@ class CheckTask extends StatefulWidget {
 }
 
 class _CheckTask extends State {
-  int count = 0;
-  bool needPay = false;
-  String _selection = 'check';
+  String _selection = 'sign';
   String remark= '';
   final _formKey = GlobalKey<FormState>();
 
   _submit () async {
-    bool isVacation = _selection != 'check';
+    int taskId = ModalRoute.of(context).settings.arguments;
+    print(_selection);
     final params = {
-      'checkTime':  DateTime.now().toString(),
-      'isVacation': isVacation,
+      'taskId': taskId,
+      'type': _selection,
       'remark': remark
     };
-    int id = ModalRoute.of(context).settings.arguments;
-    final bool res = await GlobalData.addChecklog(id, params);
-    if (res) {
-      Navigator.pop(context, true);
+    final result = await Request.post('http://127.0.0.1:7001/log/create', params);
+    if (result != null && result['success'] == true) {
+       Navigator.pop(context, true);
     }
   }
 
@@ -41,7 +39,7 @@ class _CheckTask extends State {
             onSelected: (result) { setState(() { _selection = result; }); },
             itemBuilder: (BuildContext context) => <PopupMenuEntry>[
               const PopupMenuItem(
-                value: 'check',
+                value: 'sign',
                 child: Text('签到'),
               ),
               const PopupMenuItem(
@@ -50,7 +48,7 @@ class _CheckTask extends State {
               ),
             ],
             child: Row(children: <Widget>[
-              Text(_selection == 'check' ? '签到' : '休假'),
+              Text(_selection == 'sign' ? '签到' : '休假'),
               Icon(Icons.arrow_drop_down)
             ],),
           ),

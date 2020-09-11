@@ -7,6 +7,7 @@ import '../search/index.dart';
 import '../../types/index.dart';
 import '../../components/pageAnimation/index.dart';
 import '../../components/selectTags/index.dart';
+import '../../utils/request/index.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -22,12 +23,27 @@ class _HomePageState extends State<HomePage> {
     _getList();
   }
 
+  // _getList() async {
+  //   final _lists = await GlobalData.getList();
+  //   final lists = _lists.map((item) => TypesTask.fromMap(item)).toList();
+  //   setState(() {
+  //     _tasks = lists;
+  //   });
+  //   final result = await Request.post('http://127.0.0.1:7001/task/getList', {});
+  //   if (result != null && result['success'] == true) {
+      
+  //   }
+  // }
+
   _getList() async {
-    final _lists = await GlobalData.getList();
-    final lists = _lists.map((item) => TypesTask.fromMap(item)).toList();
-    setState(() {
-      _tasks = lists;
-    });
+    final result = await Request.post('http://127.0.0.1:7001/task/getList', {});
+    print(result);
+    if (result != null && result['success'] == true) {
+      final lists = result['data'].map<TypesTask>((item) => TypesTask.fromMap(item)).toList();
+      setState(() {
+        _tasks = lists;
+      });
+    }
   }
 
   _showTags() {
@@ -35,17 +51,21 @@ class _HomePageState extends State<HomePage> {
       if (value == '全部') {
         _getList();
       } else if (value != null) {
-        _fetchData(value.id);
+        _fetchData(value.tagId);
       }
     });
   }
 
-  Future _fetchData(int id) async {
-    final List _lists = await GlobalData.searchTags(id);
-    final lists = _lists.map((item)=>TypesTask.fromMap(item)).toList();
-    setState(() {
-      _tasks = lists;
+  Future _fetchData(int tagId) async {
+    final result = await Request.post('http://127.0.0.1:7001/task/getList', {
+      'tag': tagId
     });
+    if (result != null && result['success'] == true) {
+      final lists = result['data'].map<TypesTask>((item) => TypesTask.fromMap(item)).toList();
+      setState(() {
+        _tasks = lists;
+      });
+    }
   }
 
   @override
@@ -55,7 +75,7 @@ class _HomePageState extends State<HomePage> {
       final int allDays = item.allDays;
       final int holidayDays = item.holidayDays;
       final int dayofftaken = item.dayofftaken;
-      final int id = item.id;
+      final int taskId = item.taskId;
       final Tag tagInfo = item.tagInfo;
       return new ListTaskItem(
           title: title,
@@ -65,7 +85,7 @@ class _HomePageState extends State<HomePage> {
           tagInfo: tagInfo,
           onTap: () {
             Navigator.of(context)
-                .pushNamed('/detail', arguments: id)
+                .pushNamed('/detail', arguments: taskId)
                 .then((value) => {
                       if (value) {_getList()}
                     });

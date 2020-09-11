@@ -10,6 +10,13 @@ import '../../components/countAni/index.dart';
 
 
 class Login extends StatefulWidget {
+  Login({
+    Key key,
+    this.callBack
+  }) : super(key: key);
+
+  final Function callBack;
+
   _Login createState() => new _Login();
 }
 
@@ -88,9 +95,7 @@ class _Login extends State<Login> {
         msgCodeErrorMsg = '';
       });
     }
-    if (flag) {
-      return;
-    }
+    
     Map res = await Request.login(
       'http://127.0.0.1:7001/login',
       {
@@ -98,7 +103,10 @@ class _Login extends State<Login> {
         'msgcode': msgcode
       }
     );
-    print(res);
+    if (res != null && res['success'] == true) {
+      widget.callBack();
+      return;
+    }
   }
 
   @override

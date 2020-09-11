@@ -2,9 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import '../../../components/colorPicker/index.dart';
-import '../../../globalData/index.dart';
-import '../../../types/index.dart';
 import '../../../utils/colorsUtil.dart';
+import '../../../utils/request/index.dart';
 
 
 
@@ -18,7 +17,6 @@ class _CreateTags extends State {
 
   String color = '';
 
-  List<Tag> tags = [];
 
 
   final _formKey = GlobalKey<FormState>();
@@ -26,27 +24,19 @@ class _CreateTags extends State {
   @override
   initState() {
     super.initState();
-    _getList();
   }
 
   _submit() async {
-    final res = await GlobalData.addTag(
-      name, 
-      color
-    );
-    if (res) {
+    final result = await Request.post('http://127.0.0.1:7001/tag/create', {
+      'name': name,
+      'color': color
+    });
+    if (result != null && result['success'] == true) {
       Navigator.pop(context, 'create');
-      _getList();
     }
   }
   
-  _getList() async {
-    final _lists = await GlobalData.getTagsList();
-    final lists = _lists.map((item)=>Tag.fromMap(item)).toList();
-    setState(() {
-      tags = lists;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {

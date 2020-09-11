@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../globalData/index.dart';
 import '../../components/listTaskItem/index.dart';
 import '../../types/index.dart';
+import '../../utils/request/index.dart';
 
 
 class CustomSearchDelegate extends SearchDelegate {
@@ -11,8 +12,16 @@ class CustomSearchDelegate extends SearchDelegate {
   // 获取数据
 Future<List> _fetchData(String str) async {
   final List _lists = await GlobalData.search(str);
-  final lists = _lists.map((item)=>TypesTask.fromMap(item)).toList();
-  return lists;
+  final result = await Request.post('http://127.0.0.1:7001/task/search', {
+    'title': str
+  });
+  print(result);
+  if (result != null && result['success'] == true) {
+    final lists = result['data'].map<TypesTask>((item) => TypesTask.fromMap(item)).toList();
+    return lists;
+  } else {
+    return [];
+  }
 }
 
 
@@ -62,19 +71,20 @@ Future<List> _fetchData(String str) async {
             final int allDays = item.allDays;
             final int holidayDays = item.holidayDays;
             final int dayofftaken = item.dayofftaken;
-            final int id = item.id;
+            final int taskId = item.taskId;
+            final Tag tagInfo = item.tagInfo;
             return new ListTaskItem(
-              title: title,
-              allDays: allDays,
-              holidayDays: holidayDays,
-              dayofftaken: dayofftaken == null ? 0 : dayofftaken,
-              onTap: () {
-                Navigator.of(context).pushNamed('/detail', arguments: id).then((value) => {
-                  if (value) {
-                  }
+                title: title,
+                allDays: allDays,
+                holidayDays: holidayDays,
+                dayofftaken: dayofftaken == null ? 0 : dayofftaken,
+                tagInfo: tagInfo,
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamed('/detail', arguments: taskId)
+                      .then((value) => {
+                          });
                 });
-              }
-            );
           }).toList();
           return ListView(
             children: lists,

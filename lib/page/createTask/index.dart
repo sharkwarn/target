@@ -4,16 +4,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_picker/flutter_picker.dart';
 import '../../components/tapBox/index.dart';
 import '../../components/pageAnimation/index.dart';
 import '../../components/selectTags/index.dart';
 import '../../utils/colorsUtil.dart';
 
-import '../../globalData/index.dart';
-
-import '../../types/index.dart';
-
+import '../../utils/request/index.dart';
 
 class CreateTask extends StatefulWidget {
   _CreateTask createState() => new _CreateTask();
@@ -30,12 +26,6 @@ class _CreateTask extends State {
   // 可休假
   int holidayDays;
 
-  // 已经休假
-  int dayofftaken;
-
-  // 罚金模式
-  bool isfine = true;
-
   // 罚金金额
   double fine;
 
@@ -48,85 +38,60 @@ class _CreateTask extends State {
   // 标签颜色
   String tagColor;
 
-  List tags = [];
-
   @override
   void initState() {
     super.initState();
-    _getList();
   }
 
   bool checkForm() {
+    print('title');
+    print(title);
+    print('target');
+    print(target);
+    print('allDays');
+    print(allDays);
+    print('holidayDays');
+    print(holidayDays);
+    print('fine');
+    print(fine);
+    print('tag');
+    print(tag);
     if (title != null && target != null && allDays != null && holidayDays != null && fine != null && tag != null) {
       return true;
     }
     return false;
   }
 
-  _getList() async {
-    final _lists = await GlobalData.getTagsList();
-    final lists = _lists.map((item)=>Tag.fromMap(item)).toList();
-    setState(() {
-      tags = lists;
-    });
-  }
-
-
   final _formKey = GlobalKey<FormState>();
 
   _submit() async {
-    final res = await GlobalData.add(
-      title,
-      target,
-      allDays,
-      holidayDays,
-      dayofftaken,
-      isfine,
-      fine,
-      tag
-    );
-    if (res) {
+    print('发送请求了');
+    final res = await Request.post('http://127.0.0.1:7001/task/create', {
+      'title': title,
+      'target': target,
+      'allDays': allDays,
+      'holidayDays': holidayDays,
+      'fine': fine,
+      'tag': tag
+    });
+    print(res);
+    if (res != null && res['success'] == true) {
       Navigator.pop(context, 'create');
     }
   }
 
   _showTags() {
     Navigator.push(context, SlideTopRoute(page: SelectTags(hiddenAll: true))).then((value) {
+      print(value);
       if (value != null) {
         setState(() {
-          tag = value.id;
+          tag = value.tagId;
           tagText = value.name;
           tagColor = value.color;
         });
       }
     });
   }
-
-  showPickerNumber(BuildContext context) {
-    Picker(
-        adapter: PickerDataAdapter(
-          pickerdata: tags.map((item) {
-            return item.name;
-          }).toList(),
-        ),
-        changeToFirst: false,
-        textAlign: TextAlign.left,
-        textStyle: const TextStyle(color: Colors.blue),
-        selectedTextStyle: TextStyle(color: Colors.red),
-        columnPadding: const EdgeInsets.all(8.0),
-        cancelText: '取消',
-        confirmText: '确定',
-        onConfirm: (Picker picker, List value) {
-          int index = value[0];
-          final Tag item = tags[index];
-          setState(() {
-            tag = item.id;
-            tagText = item.name;
-          });
-        }
-    ).showModal(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     double itemHeight = 50;

@@ -134,9 +134,23 @@ class ThemeColors {
 // }
 
 final Map<String, Color> statusColors = {
-  'success': Color(0xFF4ACA6D),
-  'warn': Color(0xFFFD3204),
-  'fail': Color(0xFFFD3204),
+  'sign': Color(0xFF4ACA6D),
+  'holiday': Color(0xFFFD3204),
+  'nosign': Color(0xFFFD3204),
   'create': Colors.blue[600],
-  'todo': Color(0xFFFF9B00),
+  'done': Color(0xFFFF9B00),
+  'fail': Color(0xFFFF9B00),
+  'stop': Color(0xFFFF9B00),
+  'delete': Color(0xFFFF9B00),
+};
+
+final Map<String, String> statusDesc = {
+  'sign': '签到',
+  'holiday': '休假',
+  'nosign': '未签到',
+  'create': '创建',
+  'done': '完成',
+  'fail': '失败',
+  'stop': '停止',
+  'delete': '删除',
 };
