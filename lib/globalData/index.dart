@@ -1,7 +1,5 @@
 import 'dart:convert' as convert;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../types/index.dart';
-import '../utils/date.dart';
 
 
 class GlobalData {
@@ -24,7 +22,6 @@ class GlobalData {
    * 对日期进行检查，未打卡的判定为失败，或者补为假期。
    */
   static decorateList() async {
-    final list = await getList();
 
   }
 

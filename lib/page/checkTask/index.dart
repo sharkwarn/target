@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../utils/request/index.dart';
+import '../../components/toast/index.dart';
+import '../../config.dart';
+
 
 
 class CheckTask extends StatefulWidget {
@@ -25,9 +28,16 @@ class _CheckTask extends State {
       'type': _selection,
       'remark': remark
     };
-    final result = await Request.post('http://127.0.0.1:7001/log/create', params);
+    final result = await Request.post(Urls.env + '/log/create', params);
+    print(result);
     if (result != null && result['success'] == true) {
        Navigator.pop(context, true);
+    } else if (result != null && result['errmsg'] != null) {
+      Toast.toast(
+        context,
+        msg: result['errmsg'],
+        position: ToastPostion.center
+      );
     }
   }
 

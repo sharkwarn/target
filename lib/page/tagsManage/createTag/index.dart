@@ -2,16 +2,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import '../../../components/colorPicker/index.dart';
-import '../../../utils/colorsUtil.dart';
 import '../../../utils/request/index.dart';
+import '../../../config.dart';
 
 
 
 class CreateTags extends StatefulWidget {
+
+  CreateTags({
+    Key key,
+    this.tagId,
+    this.name,
+    this.color
+  }) : super(key: key);
+
+  final int tagId;
+  final String name;
+  final String color;
+
   _CreateTags createState() => new _CreateTags();
 }
 
-class _CreateTags extends State {
+class _CreateTags extends State<CreateTags> {
 
   String name = '';
 
@@ -24,13 +36,19 @@ class _CreateTags extends State {
   @override
   initState() {
     super.initState();
+    print(widget.name);
+    name = widget.name ?? '';
+    color = widget.color ?? '';
   }
 
   _submit() async {
-    final result = await Request.post('http://127.0.0.1:7001/tag/create', {
+    final String action = widget.tagId != null ? '/tag/edit' : '/tag/create';
+    final params = {
       'name': name,
-      'color': color
-    });
+      'color': color,
+      'tagId': widget.tagId
+    };
+    final result = await Request.post(Urls.env + action, params);
     if (result != null && result['success'] == true) {
       Navigator.pop(context, 'create');
     }
@@ -46,7 +64,7 @@ class _CreateTags extends State {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(''),
-            Text('创建标签'),
+            Text('标签'),
             CupertinoButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
@@ -77,7 +95,7 @@ class _CreateTags extends State {
                   child: TextFormField(
                     decoration: const InputDecoration(
                       hintText: '标签名称',
-                      border: InputBorder.none,
+                      // border: InputBorder.none,
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
@@ -85,6 +103,7 @@ class _CreateTags extends State {
                       }
                       return null;
                     },
+                    controller: new TextEditingController(text: widget.name),
                     onSaved: (val) {
                       name = val;
                     },
@@ -93,7 +112,21 @@ class _CreateTags extends State {
               ],
             ),
           ),
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+                child: Text(
+                  '选择标签的颜色:',
+                  style: TextStyle(
+                    fontSize: 16
+                  ),
+                )
+              )
+            ],
+          ),
           ColorPicker(
+            value: color,
             onChange: (val) {
               setState(() {
                 color = val;

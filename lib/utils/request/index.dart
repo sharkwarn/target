@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../config.dart';
 
 class Request {
 
@@ -28,7 +29,6 @@ class Request {
     if (prefs == null) {
       prefs = await SharedPreferences.getInstance();
     }
-    print('phone: ' + phone);
     prefs.setString('phone', phone);
     prefs.setString('name', name);
   }
@@ -53,6 +53,12 @@ class Request {
     return res;
   }
 
+  static clearToken() async {
+    prefs = await SharedPreferences.getInstance();
+    bool res = await prefs.setString('token', '');
+    return res;
+  }
+
   static init() async {
     // 验证之前是否有token。
     final String tokenStr = await _getDbToken();
@@ -70,8 +76,6 @@ class Request {
         prefs = await SharedPreferences.getInstance();
       }
       final String phone = prefs.getString('phone');
-      print('发起校验');
-      print(phone);
       if (phone == null) {
         return false;
       }
@@ -79,7 +83,7 @@ class Request {
         'phone': phone
       };
       final Response response = await httpRequest.post(
-        'http://127.0.0.1:7001/validate',
+        Urls.env + '/validate',
         data: params
       );
       if (response.data != null && response.data['success'] == true) {

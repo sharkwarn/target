@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/colorsUtil.dart';
 import '../../theme/colorsSetting.dart';
-import '../../types/index.dart';
 
 class TimePipeline extends StatelessWidget{
   TimePipeline({

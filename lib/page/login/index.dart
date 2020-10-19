@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../../components/tapBox/index.dart';
 import '../../utils/request/index.dart';
 import '../../components/countAni/index.dart';
+import '../../config.dart';
 
 
 class Login extends StatefulWidget {
@@ -55,27 +56,23 @@ class _Login extends State<Login> {
         phoneErrorMsg = '';
       });
     }
-    print('发送');
     Map res = await Request.post(
-      'http://127.0.0.1:7001/login/sendmsg',
+      Urls.env + '/login/sendmsg',
       {
         'phone': phone
       }
     );
-    print(res['data']);
     setState(() {
       isForbidden = true;
     });
   }
   
   _submit() async {
-    bool flag = false;
     if (phone == null) {
       setState(() {
         phoneError = true;
         phoneErrorMsg = '请输入手机号';
       });
-      flag = true;
     } else {
       setState(() {
         phoneError = false;
@@ -88,7 +85,6 @@ class _Login extends State<Login> {
           msgCodeError = true;
           msgCodeErrorMsg = '请输入验证码';
         });
-        flag = true;
     } else {
       setState(() {
         msgCodeError = false;
@@ -97,7 +93,7 @@ class _Login extends State<Login> {
     }
     
     Map res = await Request.login(
-      'http://127.0.0.1:7001/login',
+      Urls.env + '/login',
       {
         'phone': phone,
         'msgcode': msgcode
@@ -141,7 +137,7 @@ class _Login extends State<Login> {
                         padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
                         child: TextField(
                           inputFormatters: [
-                            WhitelistingTextInputFormatter(RegExp("[0-9]"))
+                            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                           ],
                           decoration: const InputDecoration(
                             hintText: '请输入手机号',
@@ -193,7 +189,7 @@ class _Login extends State<Login> {
                         padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
                         child: TextField(
                           inputFormatters: [
-                            WhitelistingTextInputFormatter(RegExp("[0-9]"))
+                            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
                           ],
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(

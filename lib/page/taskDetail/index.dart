@@ -9,6 +9,7 @@ import '../../components/progressCircle/index.dart';
 import '../../types/index.dart';
 import '../../utils/colorsUtil.dart';
 import '../../utils/request/index.dart';
+import '../../config.dart';
 
 class TaskDetail extends StatefulWidget {
   _TaskDetail createState() => new _TaskDetail();
@@ -31,7 +32,7 @@ class _TaskDetail extends State {
 
   _getDetail() async {
     int taskId = ModalRoute.of(context).settings.arguments;
-    final result = await Request.post('http://127.0.0.1:7001/task/detail', {
+    final result = await Request.post(Urls.env + '/task/detail', {
       'taskId': taskId
     });
     if (result != null && result['success'] == true) {
@@ -132,6 +133,8 @@ class _TaskDetail extends State {
                 lastUpdate: detail.lastUpdate,
                 tagColor: ColorsUtil.hexStringColor(detail.tagInfo.color),
                 tagInfo: detail.tagInfo,
+                reward: detail.reward,
+                punishment: detail.punishment,
                 reload: () {
                   _reload();
                 }
@@ -156,7 +159,7 @@ class _TaskDetail extends State {
           leading: GestureDetector(child: Icon(Icons.arrow_back_ios),onTap: (){
             Navigator.pop(context, _change);
           }),
-          title: Text('')
+          title: Text('目标详情')
         ),
         backgroundColor: Colors.white,
         body: Container(

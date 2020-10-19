@@ -1,17 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 import './page/homePage/index.dart';
 import './page/createTask/index.dart';
 import './page/taskDetail/index.dart';
 import './page/checkTask/index.dart';
 import './page/tagsManage/index.dart';
+import './page/history/index.dart';
 import './page/login/index.dart';
 import './page/startPage/index.dart';
 
+import './modal/count.dart';
+import './modal/login.dart';
+
 import './utils/request/index.dart';
 void main() {
-  runApp(new App());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CounterModel()),
+        ChangeNotifierProvider(create: (_) => LoginModal()),
+      ],
+      child: App(),
+    )
+  );
+
+  // runApp(Provider<int>.value(
+  //     value: textSize,
+  //     child: ChangeNotifierProvider.value(
+  //       value: counter,
+  //       child: App(),
+  //     ),
+  //   ),
+  // );
 }
 
 class App extends StatefulWidget {
@@ -21,8 +44,6 @@ class App extends StatefulWidget {
 class _App extends State<App> {
 
   bool startPage = true;
-
-  bool noLogin = false;
 
   @override
   void initState() {
@@ -34,42 +55,40 @@ class _App extends State<App> {
   _init() async {
     // 开机先进行启动页面，实例基础控件，此过程进行登录验证
     bool res =  await Request.init();
-    print('验证结果');
-    print(res);
     if (res) {
+      Provider.of<LoginModal>(context, listen: false).changeStatus(true);
       setState(() {
         startPage = false;
-        noLogin = false;
       });
     } else {
         setState(() {
           startPage = false;
-          noLogin = true;
         });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final _login = Provider.of<LoginModal>(context);
     if (startPage) {
       return StartPage();
     }
 
-    if (noLogin) {
+    if (!_login.value) {
       return MaterialApp(
         title: 'Flutter Demo',
         home: Login(
           callBack: () {
             setState(() {
               startPage = false;
-              noLogin = false;
+              _login.changeStatus(true);
             });
           }
         ),
       );
     }
     return new MaterialApp(
-      title: 'Flutter Demo',
+      title: ' ',
       home: new HomePage(),
       routes: <String, WidgetBuilder> {
         '/login': (BuildContext context) => new Login(),
@@ -77,6 +96,7 @@ class _App extends State<App> {
         '/detail': (BuildContext context) => new TaskDetail(),
         '/checktask': (BuildContext context) => new CheckTask(),
         '/tagsManage': (BuildContext context) => new TagsManage(),
+        '/history': (BuildContext context) => new History(),
       },
     );
   }

@@ -48,12 +48,22 @@ class TypesTask {
   // 当前第几天
   int currentDay;
 
+  // 已经过去几天
+  int completedDay;
+
+  // 惩罚
+  String punishment;
+  // 奖励
+  String reward;
+
   Tag tagInfo;
 
   TypesTask.fromMap(Map<String, dynamic> map) {
     taskId = map['taskId'];
     title= map['title'];
     target= map['target'];
+    reward= map['reward'];
+    punishment= map['punishment'];
     dateCreated= map['dateCreated'];
     allDays= map['allDays'];
     tag = map['tag'];
@@ -68,6 +78,7 @@ class TypesTask {
     tagInfo = map['tagInfo'] != null ? Tag.fromMap(map['tagInfo']) : null;
     currentStatus = map['currentStatus'];
     currentDay = map['currentDay'];
+    completedDay = map['completedDay'];
   }
 }
 

@@ -32,39 +32,50 @@ class _ColorPicker extends State<ColorPicker> {
   Widget build(BuildContext context) {
     final List<Widget> tags = ThemeColors.colors.map<Widget>((item) {
       String _color = item['color'];
-      return TapBox(
-        child: Stack(
-          alignment: Alignment.bottomRight,
-          children: <Widget>[
-            Container(
-              width: 40,
-              height: 40,
-              margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
-              color: ColorsUtil.hexStringColor(_color)
-            ),
-            Offstage(
-              offstage: color != _color,
-              child: Icon(
-                Icons.done,
-                color: Colors.greenAccent
-              )
-            ),
-          ],
-        ),
-        onTap: () {
-          setState(() {
-            color = _color;
-            if (widget.onChange != null) {
-              widget.onChange(color);
-            }
-          });
-        },
+      return Container(
+        width: MediaQuery.of(context).size.width * 0.50,
+        height: 64,
+        child: TapBox(
+          child: Stack(
+            alignment: Alignment.bottomRight,
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width * 0.50,
+                height: 64,
+                margin: EdgeInsets.fromLTRB(12, 8, 12, 8),
+                color: ColorsUtil.hexStringColor(_color)
+              ),
+              Offstage(
+                offstage: color != _color,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.50,
+                  height: 64,
+                  child: Center(
+                    child: Icon(
+                      Icons.check_circle_outline,
+                      color: Colors.white,
+                      size: 44,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          onTap: () {
+            setState(() {
+              color = _color;
+              if (widget.onChange != null) {
+                widget.onChange(color);
+              }
+            });
+          },
+        )
       );
     }).toList();
-    return Wrap(
-      spacing: 8.0, // gap between adjacent chips
-      runSpacing: 4.0, // gap between lines
-      children: tags,
+    return Container(
+      child: Wrap(
+        children: tags,
+      )
     );
   }
 

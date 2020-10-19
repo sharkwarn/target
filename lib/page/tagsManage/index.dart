@@ -7,6 +7,8 @@ import '../../utils/colorsUtil.dart';
 import '../../components/pageAnimation/index.dart';
 import './createTag/index.dart';
 import '../../utils/request/index.dart';
+import '../../config.dart';
+import '../../components/tapBox/index.dart';
 
 
 
@@ -29,7 +31,7 @@ class _TagsManage extends State {
   }
   
   _getList() async {    
-    final result = await Request.post('http://127.0.0.1:7001/tag/getList', {});
+    final result = await Request.post(Urls.env + '/tag/getList', {});
     if (result != null && result['success'] == true) {
       final _lists = result['data'];
       final lists = _lists.map<Tag>((item)=>Tag.fromMap(item)).toList();
@@ -47,6 +49,21 @@ class _TagsManage extends State {
     });
   }
 
+  _editeTag(Tag tag) async {
+    print(tag);
+    Navigator.push(context, SlideTopRoute(
+      page: CreateTags(
+        tagId: tag.tagId,
+        name: tag.name,
+        color: tag.color
+      )
+    )).then((value) => {
+      if (value == 'create') {
+        _getList()
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> lists = tags.map<Widget>((item) {
@@ -56,27 +73,32 @@ class _TagsManage extends State {
         width: MediaQuery.of(context).size.width * 0.50,
         height: 64,
         padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
-        child: Container(
-          decoration: new BoxDecoration(
-            //背景
-            color: ColorsUtil.hexStringColor(color),
-            //设置四周圆角 角度
-            borderRadius: BorderRadius.all(Radius.circular(4.0)),
-            //设置四周边框
-            // border: new Border.all(width: 1, color: Colors.red),
-          ),
-          height: 88,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                name,
-                style: TextStyle(
-                  fontSize: 18.0,
-                  color: Colors.white,
+        child: TapBox(
+          onTap: () => {
+            _editeTag(item)
+          },
+          child: Container(
+            decoration: new BoxDecoration(
+              //背景
+              color: ColorsUtil.hexStringColor(color),
+              //设置四周圆角 角度
+              borderRadius: BorderRadius.all(Radius.circular(4.0)),
+              //设置四周边框
+              // border: new Border.all(width: 1, color: Colors.red),
+            ),
+            height: 88,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.white,
+                  )
                 )
-              )
-            ],
+              ],
+            ),
           ),
         )
       );

@@ -20,108 +20,92 @@ class ThemeColors {
       "color": "#ff3a3a"
     },
     {
-      "name": "可爱",
-      "color": "#66CCCC"
-    },
-    {
-      "name": "可爱",
-      "color": "#CCFF66"
-    },
-    {
-      "name": "可爱",
-      "color": "#FF99CC"
-    },
-    {
-      "name": "可爱",
+      "name": "",
       "color": "#FF9999"
     },
     {
-      "name": "可爱",
-      "color": "#FFCC99"
+      "name": "",
+      "color": "#996699"
     },
     {
-      "name": "可爱",
-      "color": "#FF6666"
-    },
-    {
-      "name": "可爱",
-      "color": "#FFFF66"
-    },
-    {
-      "name": "可爱",
-      "color": "#99CC66"
-    },
-    {
-      "name": "可爱",
-      "color": "#666699"
-    },
-    {
-      "name": "可爱",
-      "color": "#FF9999"
-    },
-    {
-      "name": "可爱",
-      "color": "#99CC33"
-    },
-    {
-      "name": "可爱",
-      "color": "#FF9900"
-    },
-    {
-      "name": "可爱",
-      "color": "#FFCC00"
-    },
-    {
-      "name": "可爱",
-      "color": "#FF0033"
-    },
-    {
-      "name": "可爱",
+      "name": "",
       "color": "#FF9966"
     },
     {
-      "name": "可爱",
-      "color": "#FF9900"
-    },
-    {
-      "name": "可爱",
-      "color": "#CCFF00"
-    },
-    {
-      "name": "可爱",
-      "color": "#CC3399"
-    },
-    {
-      "name": "可爱",
-      "color": "#99CC33"
-    },
-    {
-      "name": "可爱",
-      "color": "#FF6600"
-    },
-    {
-      "name": "可爱",
+      "name": "",
       "color": "#FF6666"
     },
     {
-      "name": "可爱",
-      "color": "#FFFF00"
+      "name": "",
+      "color": "#99CC66"
     },
     {
-      "name": "可爱",
-      "color": "#3399CC"
+      "name": "",
+      "color": "#CC3333"
     },
     {
-      "name": "可爱",
-      "color": "#FF0033"
+      "name": "",
+      "color": "#CCFF99"
     },
     {
-      "name": "可爱",
-      "color": "#993399"
+      "name": "",
+      "color": "#0099CC"
     },
     {
-      "name": "可爱",
+      "name": "",
+      "color": "#CC6699"
+    },
+    {
+      "name": "",
+      "color": "#009966"
+    },
+    {
+      "name": "",
+      "color": "#9933FF"
+    },
+    {
+      "name": "",
+      "color": "#99CCFF"
+    },
+    {
+      "name": "",
+      "color": "#FFCC00"
+    },
+    {
+      "name": "",
+      "color": "#990033"
+    },
+    {
+      "name": "",
       "color": "#FF99CC"
+    },
+    {
+      "name": "",
+      "color": "#CCCCFF"
+    },
+    {
+      "name": "",
+      "color": "#CCCC99"
+    },
+    {
+      "name": "",
+      "color": "#CC99CC"
+    },
+    {
+      "name": "",
+      "color": "#FF9933"
+    },
+    {
+      "name": "",
+      "color": "#66CC99"
+    },
+    {
+      "name": "",
+      "color": "#99CCCC"
+    },
+    {
+      "name": "",
+      "color": "#FF3399"
     }
   ];
 }
@@ -146,13 +130,15 @@ final Map<String, Color> statusColors = {
 };
 
 final Map<String, String> statusDesc = {
-  'sign': '签到',
+  'sign': '打卡',
+  'ongoing': '进行中',
   'holiday': '休假',
   'nosign': '未签到',
   'create': '创建',
   'done': '完成',
+  'success': '完成',
   'fail': '失败',
   'stop': '停止',
   'delete': '删除',
-  'autoHoliday': '休假',
+  'autoHoliday': '系统自动休假',
 };

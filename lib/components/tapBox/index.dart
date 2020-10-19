@@ -16,23 +16,23 @@ class TapBox extends StatefulWidget{
 
 
 class _TapBox extends State<TapBox> {
-  bool _highligth = false;
+  // bool _highligth = false;
 
   void _handleTapDown(TapDownDetails details) {
     setState(() {
-      _highligth = true;
+      // _highligth = true;
     });
   }
 
   void _handleTapUp(TapUpDetails details) {
     setState(() {
-      _highligth = false;
+      // _highligth = false;
     });
   }
 
   void _handleTapCancel() {
     setState(() {
-      _highligth = false;
+      // _highligth = false;
     });
   }
 
