@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
+import 'package:toBetter/components/tapBox/index.dart';
 
 import '../editItem/index.dart';
+import '../pageAnimation/index.dart';
+import '../selectTags/index.dart';
 
 import '../../utils/request/index.dart';
 import '../../utils/colorsUtil.dart';
@@ -29,7 +32,7 @@ class TaskDetail1 extends StatefulWidget {
       this.currentDay,
       this.tagInfo,
       this.punishment,
-      this.reward  
+      this.reward
     })
       : super(key: key);
 
@@ -60,22 +63,13 @@ class TaskDetail1 extends StatefulWidget {
 }
 
 class _TaskDetail extends State<TaskDetail1> {
-  bool _editTitle = false;
-
-  bool _editTarget = false;
-
-  String _editTitleText = '';
-
-  String _editTargetText = '';
 
   @override
   void initState() {
     super.initState();
-    _editTitleText = widget.title;
-    _editTargetText = widget.target;
   }
 
-  _updateTask(String _key, String _value) async {
+  _updateTask(String _key, dynamic _value) async {
     final key = _key;
     final value = _value;
     final params = {key: value, 'taskId': widget.taskId};
@@ -86,6 +80,16 @@ class _TaskDetail extends State<TaskDetail1> {
     } else {
       print('失败了');
     }
+  }
+
+  _showTags() {
+    Navigator.push(context, SlideTopRoute(page: SelectTags(hiddenAll: true))).then((value) {
+      print(value);
+      if (value != null) {
+        print(value);
+        _updateTask('tag', value.tagId);
+      }
+    });
   }
 
   @override
@@ -230,7 +234,11 @@ class _TaskDetail extends State<TaskDetail1> {
                         child: Center(
                           child: Offstage(
                             offstage: tagName == null,
-                            child: Container(
+                            child: TapBox(
+                              onTap: () {
+                                _showTags();
+                              },
+                              child: Container(
                                 padding: EdgeInsets.fromLTRB(3, 1, 3, 1),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
@@ -239,7 +247,10 @@ class _TaskDetail extends State<TaskDetail1> {
                                       : Colors.white,
                                 ),
                                 child: Text(tagName == null ? '' : tagName,
-                                    style: TextStyle(color: Colors.white))),
+                                  style: TextStyle(color: Colors.white)
+                                )
+                              ),
+                            ),
                           ),
                         ),
                       )
