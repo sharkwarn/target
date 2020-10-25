@@ -29,7 +29,7 @@ class TaskDetail1 extends StatefulWidget {
       this.lastUpdate,
       this.reload,
       this.tagColor,
-      this.currentDay,
+      this.haveSignDays,
       this.tagInfo,
       this.punishment,
       this.reward
@@ -49,7 +49,7 @@ class TaskDetail1 extends StatefulWidget {
   final List<TypesLog> logs;
   final String status;
   final String lastUpdate;
-  final int currentDay;
+  final int haveSignDays;
   final String punishment;
   final String reward;
 
@@ -78,15 +78,12 @@ class _TaskDetail extends State<TaskDetail1> {
     if (result != null && result['success'] == true) {
       widget.reload();
     } else {
-      print('失败了');
     }
   }
 
   _showTags() {
     Navigator.push(context, SlideTopRoute(page: SelectTags(hiddenAll: true))).then((value) {
-      print(value);
       if (value != null) {
-        print(value);
         _updateTask('tag', value.tagId);
       }
     });
@@ -133,7 +130,7 @@ class _TaskDetail extends State<TaskDetail1> {
                                           baseline: 30,
                                           baselineType: TextBaseline.alphabetic,
                                           child: Text(
-                                            widget.currentDay.toString(),
+                                            widget.haveSignDays.toString(),
                                             style: TextStyle(
                                               color: widget.tagColor,
                                               fontSize: 30,

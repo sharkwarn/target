@@ -51,6 +51,12 @@ class TypesTask {
   // 已经过去几天
   int completedDay;
 
+  // 已经签到多少天
+  int haveSignDays;
+
+  // 之前完成多少天
+  int preAllDays;
+
   // 惩罚
   String punishment;
   // 奖励
@@ -78,7 +84,9 @@ class TypesTask {
     tagInfo = map['tagInfo'] != null ? Tag.fromMap(map['tagInfo']) : null;
     currentStatus = map['currentStatus'];
     currentDay = map['currentDay'];
+    preAllDays = map['preAllDays'];
     completedDay = map['completedDay'];
+    haveSignDays = map['haveSignDays'];
   }
 }
 

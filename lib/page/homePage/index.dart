@@ -24,6 +24,8 @@ class _HomePageState extends State<HomePage> {
 
   String currentStatus = 'nosign';
 
+  String status = 'ongoing';
+
   @override
   initState() {
     super.initState();
@@ -31,12 +33,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getList() async {
-    final params = {
-      'status': 'ongoing',
-      'currentStatus': currentStatus,
+    final Map<String, dynamic> params = {
       'tag': tagId
     };
-    print(tagId);
+    if (currentStatus == null) {
+      params['status'] = status;
+      params['orders'] = [
+        ['lastUpdate', 'desc']
+      ];
+    } else {
+      params['currentStatus'] = currentStatus;
+      params['status'] = ['ongoing', 'willStart'];
+    }
     final result = await Request.post(Urls.env + '/task/getList', params);
     if (result != null && result['success'] == true) {
       final lists = result['data'].map<TypesTask>((item) => TypesTask.fromMap(item)).toList();
@@ -73,19 +81,22 @@ class _HomePageState extends State<HomePage> {
       final Tag tagInfo = item.tagInfo;
       final String currentStatus = item.currentStatus;
       final String status = item.status;
-      final int currentDay = item.currentDay;
-      final int completedDay = item.completedDay;
+      final int haveSignDays = item.haveSignDays;
+      final int preAllDays = item.preAllDays ?? 0;
       return new ListTaskItem(
           taskId: taskId,
           title: title,
-          allDays: allDays,
+          allDays: allDays + preAllDays,
           holidayDays: holidayDays,
           dayofftaken: dayofftaken == null ? 0 : dayofftaken,
           tagInfo: tagInfo,
           currentStatus: currentStatus,
           status: status,
-          currentDay: currentDay,
-          completedDay: completedDay,
+          currentDay: haveSignDays,
+          completedDay: haveSignDays,
+          reload: () {
+            _getList();
+          },
           onTap: () {
             Navigator.of(context)
                 .pushNamed('/detail', arguments: taskId)
@@ -134,6 +145,7 @@ class _HomePageState extends State<HomePage> {
                         onTap: () {
                           setState(() {
                             currentStatus = 'nosign';
+                            status = null;
                           });
                           _getList();
                         },
@@ -156,6 +168,7 @@ class _HomePageState extends State<HomePage> {
                         onTap: () {
                           setState(() {
                             currentStatus = 'done';
+                            status = null;
                           });
                           _getList();
                         },
@@ -173,7 +186,53 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         )
-                      )
+                      ),
+                      TapBox(
+                        onTap: () {
+                          setState(() {
+                            status = 'success';
+                            currentStatus = null;
+                          });
+                          _getList();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+                          margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                          decoration: new BoxDecoration(
+                            color: status == 'success' ? Colors.blue : Colors.transparent,
+                            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                          ),
+                          child: Text(
+                            '已完成',
+                            style: TextStyle(
+                              color: status == 'success' ? Colors.white : Colors.blue,
+                            ),
+                          ),
+                        )
+                      ),
+                      TapBox(
+                        onTap: () {
+                          setState(() {
+                            status = 'fail';
+                            currentStatus = null;
+                          });
+                          _getList();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+                          margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                          decoration: new BoxDecoration(
+                            color: status == 'fail' ? Colors.blue : Colors.transparent,
+                            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                          ),
+                          child: Text(
+                            '已失败',
+                            style: TextStyle(
+                              color: status == 'fail' ? Colors.white : Colors.blue,
+                            ),
+                          ),
+                        )
+                      ),
                     ],
                   ),
                 ),

@@ -73,18 +73,18 @@ Future<List> _fetchData(String str) async {
             final Tag tagInfo = item.tagInfo;
             final String currentStatus = item.currentStatus;
             final String status = item.status;
-            final int currentDay = item.currentDay;
-            final int completedDay = item.completedDay;
+            final int haveSignDays = item.haveSignDays;
+            final int preAllDays = item.preAllDays ?? 0;
             return new ListTaskItem(
                 title: title,
-                allDays: allDays,
+                allDays: allDays + preAllDays,
                 holidayDays: holidayDays,
                 dayofftaken: dayofftaken == null ? 0 : dayofftaken,
                 tagInfo: tagInfo,
                 currentStatus: currentStatus,
                 status: status,
-                currentDay: currentDay,
-                completedDay: completedDay,
+                currentDay: haveSignDays,
+                completedDay: haveSignDays,
                 onTap: () {
                   Navigator.of(context)
                       .pushNamed('/detail', arguments: taskId)

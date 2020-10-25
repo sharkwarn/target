@@ -50,7 +50,6 @@ class _TagsManage extends State {
   }
 
   _editeTag(Tag tag) async {
-    print(tag);
     Navigator.push(context, SlideTopRoute(
       page: CreateTags(
         tagId: tag.tagId,

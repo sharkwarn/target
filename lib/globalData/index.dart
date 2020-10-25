@@ -29,7 +29,6 @@ class GlobalData {
   static checkTaskLog(Map detail) {
     try {
       if (detail['checklogs'].length == detail['allDays']) {
-        print('已成功');
         return;
       }
       DateTime lastUpdate = detail['checklogs'].length > 0
@@ -193,9 +192,7 @@ class GlobalData {
     final SharedPreferences db = await _init();
     bool res = await db.setString('tasks', convert.jsonEncode(params));
     if (res) {
-      print('保存成功');
     } else {
-      print('保存失败');
     }
     return res;
   }

@@ -36,8 +36,6 @@ class _SelectTags extends State<SelectTags> {
     final result = await Request.post(Urls.env + '/tag/getList', {});
     if (result != null && result['success'] == true) {
       final _lists = result['data'];
-      print('标签');
-      print(_lists);
       final lists = _lists.map<Tag>((item)=>Tag.fromMap(item)).toList();
       setState(() {        
         tags = lists;

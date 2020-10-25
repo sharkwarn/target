@@ -49,6 +49,9 @@ class _History extends State<History> {
   Future _fetchData(int tagId) async {
     final result = await Request.post(Urls.env + '/task/getList', {
       'tag': tagId,
+      'orders': [
+        ['lastUpdate', 'desc']
+      ],
       'status': [
         'success', 'fail'
       ]
@@ -72,16 +75,17 @@ class _History extends State<History> {
       final Tag tagInfo = item.tagInfo;
       final String currentStatus = item.currentStatus;
       final String status = item.status;
-      final int currentDay = item.currentDay;
+      final int haveSignDays = item.haveSignDays;
+      final int preAllDays = item.preAllDays ?? 0;
       return new ListTaskItem(
           title: title,
-          allDays: allDays,
+          allDays: allDays + preAllDays,
           holidayDays: holidayDays,
           dayofftaken: dayofftaken == null ? 0 : dayofftaken,
           tagInfo: tagInfo,
           currentStatus: currentStatus,
           status: status,
-          currentDay: currentDay,
+          completedDay: haveSignDays,
           onTap: () {
             Navigator.of(context)
                 .pushNamed('/detail', arguments: taskId)

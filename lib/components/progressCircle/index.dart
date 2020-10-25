@@ -13,7 +13,6 @@ class ProgressCircle extends CustomPainter {
 
   @override
   paint(Canvas canvas, Size size) {
-    print(size);
     drawline(canvas, 30);
     drawline(canvas, 70);
     drawline(canvas, 110);

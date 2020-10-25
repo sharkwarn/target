@@ -36,7 +36,6 @@ class _CreateTags extends State<CreateTags> {
   @override
   initState() {
     super.initState();
-    print(widget.name);
     name = widget.name ?? '';
     color = widget.color ?? '';
   }

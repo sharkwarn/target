@@ -42,13 +42,10 @@ class _EditItem extends State<EditItem> {
     final key = widget.valueKey;
     final value = _value;
     final params = {key: value, 'taskId': widget.taskId};
-    print(params);
     final result = await Request.post(Urls.env + '/task/edit', params);
-    print(result);
     if (result != null && result['success'] == true) {
       widget.callback();
     } else {
-      print('失败了');
     }
   }
 

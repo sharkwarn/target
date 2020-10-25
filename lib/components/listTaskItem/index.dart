@@ -24,7 +24,8 @@ class ListTaskItem extends StatefulWidget {
     this.currentStatus,
     this.currentDay,
     this.status,
-    this.completedDay
+    this.completedDay,
+    this.reload
   }) : super(key: key);
 
   final int taskId;
@@ -40,6 +41,8 @@ class ListTaskItem extends StatefulWidget {
   final int currentDay;
   
   final GestureTapCallback onTap;
+
+  final Function reload;
 
   final Tag tagInfo;
 
@@ -80,13 +83,17 @@ class _ListTaskItem extends State<ListTaskItem> {
         taskStatus = (widget.completedDay ?? 0).toString();
         taskStatusColor = ColorsUtil.hexStringColor(tagColor);
         break;
+      case 'willStart':
+        taskStatus = '明天开始 ' + widget.completedDay.toString();
+        taskStatusColor = ColorsUtil.hexStringColor(tagColor);
+        break;
       case 'success':
-        taskStatus = '完成';
-        taskStatusColor = Colors.green;
+        taskStatus = '完成 ' + widget.completedDay.toString();
+        taskStatusColor = Colors.green[300];
         break;
       case 'fail':
-        taskStatus = '失败';
-        taskStatusColor = Colors.red;
+        taskStatus = '失败 ' + widget.completedDay.toString();
+        taskStatusColor = Colors.red[300];
         break;
       default:
         taskStatus = statusDesc[widget.status] ?? ' ';
@@ -143,7 +150,11 @@ class _ListTaskItem extends State<ListTaskItem> {
                       Offstage(
                         child: TapBox(
                           onTap: () {
-                            print('点击了');
+                            Navigator.of(context).pushNamed('/checktask', arguments: widget.taskId).then((value) => {
+                              if (value == true && widget.reload != null) {
+                                widget.reload()
+                              }
+                            });
                           },
                           child: Container(
                             padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
@@ -179,7 +190,7 @@ class _ListTaskItem extends State<ListTaskItem> {
                           new Row(
                             children: <Widget>[
                               new Text('进度: '),
-                              new Text(taskStatus)
+                              new Text(taskStatus + '/' + allDays.toString() )
                             ]
                           ),
                           new Row(
@@ -200,7 +211,7 @@ class _ListTaskItem extends State<ListTaskItem> {
                   color: Colors.white,
                   child: ProgressLine(
                     sum: allDays,
-                    current: status == 'ongoing' ? widget.completedDay ?? 0 : allDays,
+                    current: status == 'ongoing' || status == 'willStart' ? widget.completedDay ?? 0 : allDays,
                     color: taskStatusColor,
                   )
                 ),

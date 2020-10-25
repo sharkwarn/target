@@ -22,3 +22,10 @@ ALTER TABLE user_test_task add (
     reward VARCHAR(1000) DEFAULT '' COMMENT '奖励'
 ) 
 ```
+
+```mysql
+ALTER TABLE user_test_task add (
+    haveSignDays int  default 0 COMMENT '已打卡天数',
+    preAllDays int default 0 COMMENT '上一轮结束时总打卡天数'
+)
+```

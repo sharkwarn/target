@@ -15,21 +15,34 @@ class CheckTask extends StatefulWidget {
   _CheckTask createState() => new _CheckTask();
 }
 
-class _CheckTask extends State {
+class _CheckTask extends State<CheckTask> {
   String _selection = 'sign';
   String remark= '';
+  String type = 'sign';
   final _formKey = GlobalKey<FormState>();
 
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      Map arguments = ModalRoute.of(context).settings.arguments;
+      setState(() {
+        if (arguments != null && arguments['type'] != null) {
+          type = arguments['type'];
+          _selection = arguments['type'];
+        }
+      });
+    });
+  }
+
   _submit () async {
-    int taskId = ModalRoute.of(context).settings.arguments;
-    print(_selection);
+    final Map<String, dynamic> arg = ModalRoute.of(context).settings.arguments;
     final params = {
-      'taskId': taskId,
+      'taskId': arg['taskId'],
       'type': _selection,
       'remark': remark
     };
     final result = await Request.post(Urls.env + '/log/create', params);
-    print(result);
     if (result != null && result['success'] == true) {
        Navigator.pop(context, true);
     } else if (result != null && result['errmsg'] != null) {
@@ -43,24 +56,55 @@ class _CheckTask extends State {
 
   @override
   Widget build(BuildContext context) {
+    String typeText;
+    switch (_selection) {
+      case 'sign':
+        typeText = '签到';
+        break;
+      case 'holiday':
+        typeText = '休假';
+        break;
+      case 'fail':
+        typeText = '判定失败';
+        break;
+      default:
+        typeText = '签到';
+        break;
+    }
     return new Scaffold(
         appBar: new AppBar(
-          title: PopupMenuButton(
-            onSelected: (result) { setState(() { _selection = result; }); },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-              const PopupMenuItem(
-                value: 'sign',
-                child: Text('签到'),
-              ),
-              const PopupMenuItem(
-                value: 'holiday',
-                child: Text('休假'),
-              ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              PopupMenuButton(
+                onSelected: (result) { setState(() { _selection = result; }); },
+                itemBuilder: (BuildContext context) {
+                  if (type == 'fail') {
+                    return <PopupMenuEntry>[
+                      const PopupMenuItem(
+                        value: 'fail',
+                        child: Text('判定失败'),
+                      ),
+                    ];
+                  } else {
+                    return <PopupMenuEntry>[
+                      const PopupMenuItem(
+                        value: 'sign',
+                        child: Text('签到'),
+                      ),
+                      const PopupMenuItem(
+                        value: 'holiday',
+                        child: Text('休假'),
+                      ),
+                    ];
+                  }
+                },
+                child: Row(children: <Widget>[
+                  Text(typeText),
+                  Icon(Icons.arrow_drop_down)
+                ],),
+              )
             ],
-            child: Row(children: <Widget>[
-              Text(_selection == 'sign' ? '签到' : '休假'),
-              Icon(Icons.arrow_drop_down)
-            ],),
           ),
         ),
         backgroundColor: Colors.grey[300],

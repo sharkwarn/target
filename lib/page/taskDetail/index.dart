@@ -66,33 +66,84 @@ class _TaskDetail extends State {
       );
     }
     List<Widget> lists = [];
-    lists.add(
-      CustomPaint(
-        painter: ProgressCircle(
-          width: MediaQuery.of(context).size.width,
-          height: 200
-        ),
-        child: Container(
-          width: double.infinity,
-          height: 200
-        ),
-      )
-    );
-    if (detail.currentStatus == 'nosign') {
+    // lists.add(
+    //   CustomPaint(
+    //     painter: ProgressCircle(
+    //       width: MediaQuery.of(context).size.width,
+    //       height: 200
+    //     ),
+    //     child: Container(
+    //       width: double.infinity,
+    //       height: 200
+    //     ),
+    //   )
+    // );
+    if (detail.status == 'fail' || detail.status == 'success') {
       lists.add(
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             CupertinoButton(
+              child: Text('再来一次'),
+              onPressed: (){
+                Navigator.of(context).pushNamed('/create',
+                  arguments: {
+                    'taskId': detail.taskId,
+                    'title': detail.title,
+                    'target': detail.target,
+                    'allDays': detail.allDays,
+                    'holidayDays': detail.holidayDays,
+                    'fine': detail.fine,
+                    'reward': detail.reward,
+                    'punishment': detail.punishment,
+                    'tag': detail.tag,
+                    'tagColor': detail.tagInfo.color,
+                    'tagName': detail.tagInfo.name
+                  }
+                ).then((value) => {
+                  if (value != null) {
+                    _reload()
+                  }
+                });
+              },
+              color: Colors.blue,
+              pressedOpacity: .5,
+            )
+          ],
+        )
+      );
+    } else if (detail.currentStatus == 'nosign' && detail.status == 'ongoing') {
+      lists.add(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            CupertinoButton(
               child: Text('去签到'),
               onPressed: (){
-                Navigator.of(context).pushNamed('/checktask', arguments: detail.taskId).then((value) => {
+                Navigator.of(context).pushNamed('/checktask', arguments: {
+                  'taskId': detail.taskId
+                }).then((value) => {
                   if (value == true) {
                     _reload()
                   }
                 });
               },
               color: Colors.blue,
+              pressedOpacity: .5,
+            ),
+            CupertinoButton(
+              child: Text('判定失败'),
+              onPressed: (){
+                Navigator.of(context).pushNamed('/checktask', arguments: {
+                  'taskId': detail.taskId,
+                  'type': 'fail'
+                }).then((value) => {
+                  if (value == true) {
+                    _reload()
+                  }
+                });
+              },
+              color: Colors.red,
               pressedOpacity: .5,
             )
           ],
@@ -104,13 +155,13 @@ class _TaskDetail extends State {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              '已签到'
+              detail.status == 'willStart' ? '未开始' : '已签到'
             )
           ],
         )
       );
     }
-    
+    final int preAllDays = detail.preAllDays ?? 0;
     lists.add(
       new Container(
         child: new Column(
@@ -119,10 +170,10 @@ class _TaskDetail extends State {
               child: new TaskDetail1(
                 taskId: detail.taskId,
                 title: detail.title,
-                currentDay: detail.currentDay,
+                haveSignDays: detail.haveSignDays,
                 target: detail.target,
                 dateCreated: detail.dateCreated,
-                allDays: detail.allDays,
+                allDays: detail.allDays + preAllDays,
                 holidayDays: detail.holidayDays,
                 dayofftaken: detail.dayofftaken,
                 isfine: detail.isfine,
@@ -163,6 +214,7 @@ class _TaskDetail extends State {
         ),
         backgroundColor: Colors.white,
         body: Container(
+          padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
           child: new ListView(
             children: lists
           ),
