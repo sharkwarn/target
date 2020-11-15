@@ -6,12 +6,16 @@ class CheckLog extends StatelessWidget {
     Key key,
     this.checkTime,
     this.remark,
-    this.type
+    this.type,
+    this.count,
+    this.changetime
   }) : super(key: key);
 
   final String checkTime;
   final String remark;
   final String type;
+  final int count;
+  final String changetime;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +25,8 @@ class CheckLog extends StatelessWidget {
       time: date[1],
       status: type,
       remark: remark,
+      count: count,
+      changetime: changetime
     );
   }
 }

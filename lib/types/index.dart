@@ -56,11 +56,19 @@ class TypesTask {
 
   // 之前完成多少天
   int preAllDays;
+  
 
   // 惩罚
   String punishment;
   // 奖励
   String reward;
+
+  // 计数开关
+  int counter;
+  // 计数次数
+  int count;
+  // 计数时间
+  String countTime;
 
   Tag tagInfo;
 
@@ -87,6 +95,9 @@ class TypesTask {
     preAllDays = map['preAllDays'];
     completedDay = map['completedDay'];
     haveSignDays = map['haveSignDays'];
+    counter = map['counter'] ?? 0;
+    count = map['count'] ?? 0;
+    countTime = map['countTime'];
   }
 }
 
@@ -104,6 +115,12 @@ class TypesLog {
 
   // 状态类型
   String type;
+  
+  // 计数
+  int count;
+
+  // 计数时间
+  String changetime;
 
   // 评论
   List<TypesCommet> commet;
@@ -111,6 +128,8 @@ class TypesLog {
     checkTime = map['checkTime'];
     remark = map['remark'];
     type = map['type'];
+    count = map['count'] ?? 0;
+    changetime = map['changetime'];
   }
 }
 

@@ -10,6 +10,8 @@ import './page/tagsManage/index.dart';
 import './page/history/index.dart';
 import './page/login/index.dart';
 import './page/startPage/index.dart';
+import './page/rewardList/index.dart';
+import './page/signIn/index.dart';
 
 import './modal/count.dart';
 import './modal/login.dart';
@@ -55,16 +57,19 @@ class _App extends State<App> {
   _init() async {
     // 开机先进行启动页面，实例基础控件，此过程进行登录验证
     bool res =  await Request.init();
-    if (res) {
-      Provider.of<LoginModal>(context, listen: false).changeStatus(true);
-      setState(() {
-        startPage = false;
-      });
-    } else {
+    new Future.delayed(Duration(seconds: 1),(){
+      if (res) {
+        Provider.of<LoginModal>(context, listen: false).changeStatus(true);
         setState(() {
           startPage = false;
         });
-    }
+      } else {
+          setState(() {
+            startPage = false;
+          });
+      }
+	  });
+    
   }
 
   @override
@@ -85,11 +90,20 @@ class _App extends State<App> {
             });
           }
         ),
+        routes: <String, WidgetBuilder> {
+          '/signIn': (BuildContext context) => new SignIn()
+        },
       );
     }
     return new MaterialApp(
       title: ' ',
       home: new HomePage(),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        cupertinoOverrideTheme: CupertinoThemeData(
+            brightness: Brightness.light
+        ),
+      ),
       routes: <String, WidgetBuilder> {
         '/login': (BuildContext context) => new Login(),
         '/create': (BuildContext context) => new CreateTask(),
@@ -97,6 +111,7 @@ class _App extends State<App> {
         '/checktask': (BuildContext context) => new CheckTask(),
         '/tagsManage': (BuildContext context) => new TagsManage(),
         '/history': (BuildContext context) => new History(),
+        '/rewardList': (BuildContext context) => new RewardList()
       },
     );
   }

@@ -25,11 +25,11 @@ class Request {
     return null;
   }
 
-  static _setUserInfo(String phone, String name) async {
+  static _setUserInfo(String user, String name) async {
     if (prefs == null) {
       prefs = await SharedPreferences.getInstance();
     }
-    prefs.setString('phone', phone);
+    prefs.setString('user', user);
     prefs.setString('name', name);
   }
 
@@ -75,16 +75,12 @@ class Request {
       if (prefs == null) {
         prefs = await SharedPreferences.getInstance();
       }
-      final String phone = prefs.getString('phone');
-      if (phone == null) {
+      final String user = prefs.getString('user');
+      if (user == null) {
         return false;
       }
-      Map<String, dynamic> params = {
-        'phone': phone
-      };
       final Response response = await httpRequest.post(
-        Urls.env + '/validate',
-        data: params
+        Urls.env + '/validate'
       );
       if (response.data != null && response.data['success'] == true) {
         return true;
@@ -107,7 +103,7 @@ class Request {
       if (response.data != null && response.data['success'] == true) {
         final List<String> tokens = response.headers['token'];
         _setDbToken(tokens[0]);
-        _setUserInfo(response.data['data']['phone'], response.data['data']['name']);
+        _setUserInfo(response.data['data']['user'], response.data['data']['name']);
         return response.data;
       } else {
         return response.data;

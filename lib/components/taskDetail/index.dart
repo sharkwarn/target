@@ -235,18 +235,24 @@ class _TaskDetail extends State<TaskDetail1> {
                               onTap: () {
                                 _showTags();
                               },
-                              child: Container(
-                                padding: EdgeInsets.fromLTRB(3, 1, 3, 1),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: tagColor != null
-                                      ? ColorsUtil.hexStringColor(tagColor)
-                                      : Colors.white,
-                                ),
-                                child: Text(tagName == null ? '' : tagName,
-                                  style: TextStyle(color: Colors.white)
-                                )
-                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(3, 1, 3, 1),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: tagColor != null
+                                          ? ColorsUtil.hexStringColor(tagColor)
+                                          : Colors.white,
+                                    ),
+                                    child: Text(tagName == null ? '' : tagName,
+                                      style: TextStyle(color: Colors.white)
+                                    )
+                                  ),
+                                  Text('点击修改')
+                                ]
+                              )
                             ),
                           ),
                         ),

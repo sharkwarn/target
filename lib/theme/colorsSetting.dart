@@ -128,6 +128,7 @@ final Map<String, Color> statusColors = {
   'fail': Color(0xFFFF9B00),
   'stop': Color(0xFFFF9B00),
   'delete': Color(0xFFFF9B00),
+  'counter': Color(0xFF4ACA6D)
 };
 
 final Map<String, String> statusDesc = {
@@ -136,11 +137,12 @@ final Map<String, String> statusDesc = {
   'holiday': '休假',
   'nosign': '未签到',
   'create': '创建',
-  'restart': '重新开始',
+  'restart': '再来一次',
   'done': '完成',
   'success': '完成',
   'fail': '失败',
   'stop': '停止',
   'delete': '删除',
   'autoHoliday': '系统自动休假',
+  'counter': '计数'
 };

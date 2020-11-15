@@ -5,9 +5,13 @@ class StartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       home: new Scaffold(
-        body: new Center(
-          // 如果设置父组件包裹多个多个组件的情况，可以用row,column,
-          child: Text('启动页面')
+        body: Container(
+          height: double.maxFinite,
+          width: double.maxFinite,
+          child: Image.asset(
+            'images/background.jpg',
+            fit: BoxFit.cover
+          ),
         )
       ),
     );

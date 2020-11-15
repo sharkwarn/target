@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../../components/tapBox/index.dart';
 import '../../utils/request/index.dart';
 import '../../components/countAni/index.dart';
+import '../../components/toast/index.dart';
 import '../../config.dart';
 
 
@@ -23,20 +24,28 @@ class Login extends StatefulWidget {
 
 class _Login extends State<Login> {
 
-  String phone;
+  String user;
 
   String msgcode;
+
+  String password;
+
+  String type = 'password';
 
   Animation<double> animation;
   AnimationController controller;
 
   bool isForbidden = false;
 
-  bool phoneError = false;
-  String phoneErrorMsg = '';
+  bool userError = false;
+  String userErrorMsg = '';
 
   bool msgCodeError = false;
   String msgCodeErrorMsg = '';
+
+
+  bool passwordError = false;
+  String passwordErrorMsg = '';
 
   @override
   void initState() {
@@ -44,22 +53,22 @@ class _Login extends State<Login> {
   }
 
   sendMsgCode() async {
-    if (phone == null) {
+    if (user == null) {
       setState(() {
-        phoneError = true;
-        phoneErrorMsg = '请输入手机号';
+        userError = true;
+        userErrorMsg = '请输入手机号';
       });
       return;
     } else {
       setState(() {
-        phoneError = false;
-        phoneErrorMsg = '';
+        userError = false;
+        userErrorMsg = '';
       });
     }
     Map res = await Request.post(
       Urls.env + '/login/sendmsg',
       {
-        'phone': phone
+        'user': user
       }
     );
     setState(() {
@@ -68,40 +77,67 @@ class _Login extends State<Login> {
   }
   
   _submit() async {
-    if (phone == null) {
+    if (user == null) {
       setState(() {
-        phoneError = true;
-        phoneErrorMsg = '请输入手机号';
+        userError = true;
+        userErrorMsg = '请输入手机号 / 邮箱';
       });
+      return;
     } else {
       setState(() {
-        phoneError = false;
-        phoneErrorMsg = '';
+        userError = false;
+        userErrorMsg = '';
       });
     }
 
-    if (msgcode == null) {
-        setState(() {
-          msgCodeError = true;
-          msgCodeErrorMsg = '请输入验证码';
-        });
+    if (type != 'password' && msgcode == null) {
+      setState(() {
+        msgCodeError = true;
+        msgCodeErrorMsg = '请输入验证码';
+      });
+      return;
     } else {
       setState(() {
         msgCodeError = false;
         msgCodeErrorMsg = '';
       });
     }
+
+    if (type == 'password' && password == null) {
+      setState(() {
+        passwordError = true;
+        passwordErrorMsg = '请输入密码';
+      });
+      return;
+    } else {
+      setState(() {
+        passwordError = false;
+        passwordErrorMsg = '';
+      });
+    }
     
+    Map<String, dynamic> obj = {
+      'user': user,
+    };
+    if (type == 'password') {
+      obj['password'] = password;
+    } else {
+      obj['msgcode'] = msgcode;
+    }
+    print('发起请求');
     Map res = await Request.login(
       Urls.env + '/login',
-      {
-        'phone': phone,
-        'msgcode': msgcode
-      }
+      obj
     );
     if (res != null && res['success'] == true) {
       widget.callBack();
       return;
+    } else if (res != null && res['errmsg'] != null) {
+      Toast.toast(
+        context,
+        msg: res['errmsg'],
+        position: ToastPostion.center
+      );
     }
   }
 
@@ -110,23 +146,23 @@ class _Login extends State<Login> {
     double itemHeight = 50;
     final TextStyle fontStyle = TextStyle(
       fontSize: 16,
-      color: Colors.black
+      color: Color(0X80FFFFFF)
     );
     return new Scaffold(
-        backgroundColor: Colors.green[300],
-        body: Center(
+        backgroundColor: Color(0xFF24C0CB),
+        body: Container(
+          padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
           child: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
+                margin: EdgeInsets.fromLTRB(0, 200, 0, 0),
+                padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
                 height: itemHeight,
                 decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      width: 1,
-                      color: Color(0xffe5e5e5)
-                    )
-                  ),
+                  border: new Border.all(color: Color(0x2BFAFAFA), width: 1), // 边色与边宽度
+                  borderRadius: new BorderRadius.circular((25.0)), // 圆角度
+                  color: Color(0X33FFFFFF),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -136,11 +172,14 @@ class _Login extends State<Login> {
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
                         child: TextField(
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                          ],
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
                           decoration: const InputDecoration(
-                            hintText: '请输入手机号',
+                            hintText: '手机号 / 邮箱',
+                            hintStyle: TextStyle(
+                              color: Color(0X80FFFFFF)
+                            ),
                             border: InputBorder.none,
                           ),
                           // validator: (value) {
@@ -150,7 +189,7 @@ class _Login extends State<Login> {
                           //   return null;
                           // },
                           onChanged: (val) {
-                            phone = val;
+                            user = val;
                           },
                         ),
                       ),
@@ -159,99 +198,224 @@ class _Login extends State<Login> {
                 )
               ),
               Container(
-                height: itemHeight,
+                height: 30,
+                padding: EdgeInsets.fromLTRB(13, 4, 13, 0),
                 child: Offstage(
-                  offstage: !phoneError,
-                  child: Text(
-                    phoneErrorMsg,
-                    style: TextStyle(
-                      color: Colors.red
+                  offstage: !userError,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                      userErrorMsg,
+                      style: TextStyle(
+                        color: Colors.red
+                      ),
+                    )
+                    ],
+                  ),
+                ),
+              ),
+              Offstage(
+                offstage: type == 'password',
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+                  height: itemHeight,
+                  decoration: BoxDecoration(
+                    border: new Border.all(color: Color(0x2BFAFAFA), width: 1), // 边色与边宽度
+                    borderRadius: new BorderRadius.circular((25.0)), // 圆角度
+                    color: Color(0X33FFFFFF),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                          child: TextField(
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp("[0-9]"))
+                            ],
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              hintText: '验证码',
+                              hintStyle: TextStyle(
+                                color: Color(0X80FFFFFF)
+                              ),
+                              border: InputBorder.none,
+                            ),
+                            // validator: (value) {
+                            //   if (value.isEmpty) {
+                            //     return '请输入完成天数';
+                            //   }
+                            //   return null;
+                            // },
+                            onChanged: (val) {
+                              msgcode = val;
+                            },
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 100,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                          child: TapBox(
+                            child: !isForbidden ?  Text(
+                              '获取验证码',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ) : Center(
+                              child: CountAni(callback: () {
+                                setState(() {
+                                    isForbidden = false;
+                                  });
+                                },
+                              ),
+                            ),
+                            onTap: () {
+                              sendMsgCode();
+                            },
+                          ),
+                        )
+                      ),
+                    ],
+                  )
+                ),
+              ),
+              Offstage(
+                offstage: type == 'password',
+                child: Container(
+                  height: 20,
+                  child: Offstage(
+                    offstage: !msgCodeError,
+                    child: Text(
+                      msgCodeErrorMsg,
+                      style: TextStyle(
+                        color: Colors.red
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Offstage(
+                offstage: type != 'password',
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+                  height: itemHeight,
+                  decoration: BoxDecoration(
+                    border: new Border.all(color: Color(0x2BFAFAFA), width: 1), // 边色与边宽度
+                    borderRadius: new BorderRadius.circular((25.0)), // 圆角度
+                    color: Color(0X33FFFFFF),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                          child: TextField(
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                            inputFormatters: [
+                            ],
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              hintText: '密码',
+                              hintStyle: TextStyle(
+                                color: Color(0X80FFFFFF)
+                              ),
+                              border: InputBorder.none,
+                            ),
+                            // validator: (value) {
+                            //   if (value.isEmpty) {
+                            //     return '请输入完成天数';
+                            //   }
+                            //   return null;
+                            // },
+                            onChanged: (val) {
+                              password = val;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ),
+              ),
+              Offstage(
+                offstage: type != 'password',
+                child: Container(
+                  height: 20,
+                  child: Offstage(
+                    offstage: !passwordError,
+                    child: Text(
+                      passwordErrorMsg,
+                      style: TextStyle(
+                        color: Colors.red
+                      ),
                     ),
                   ),
                 ),
               ),
               Container(
-                height: itemHeight,
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      width: 1,
-                      color: Color(0xffe5e5e5)
-                    )
-                  ),
-                ),
+                padding: EdgeInsets.fromLTRB(13, 0, 13, 0),
+                margin: EdgeInsets.fromLTRB(0, 10, 0, 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
-                        child: TextField(
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                          ],
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            hintText: '请输入验证码',
-                            border: InputBorder.none,
-                          ),
-                          // validator: (value) {
-                          //   if (value.isEmpty) {
-                          //     return '请输入完成天数';
-                          //   }
-                          //   return null;
-                          // },
-                          onChanged: (val) {
-                            msgcode = val;
-                          },
-                        ),
+                  children: [
+                    TapBox(
+                      onTap: () {
+                        setState(() {
+                          type = type == 'password' ? 'msgcode' : 'password';
+                        });
+                      },
+                      child: Text(
+                        type == 'password' ? '验证码登录' : '密码登录',
+                        style: TextStyle(
+                          color: Colors.white,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                        )
                       ),
                     ),
-                    Container(
-                      width: 100,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
-                        child: TapBox(
-                          child: !isForbidden ?  Text(
-                            '获取验证码',
-                            style: fontStyle,
-                          ) : CountAni(callback: () {
-                            setState(() {
-                              isForbidden = false;
-                            });
-                          },),
-                          onTap: () {
-                            sendMsgCode();
-                          },
-                        ),
-                      )
-                    ),
+                    TapBox(
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/signIn');
+                      },
+                      child: Text(
+                        '注册',
+                        style: TextStyle(
+                          color: Colors.white,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                        )
+                      ),
+                    )
                   ],
-                )
-              ),
-              Container(
-                height: itemHeight,
-                child: Offstage(
-                  offstage: !msgCodeError,
-                  child: Text(
-                    msgCodeErrorMsg,
-                    style: TextStyle(
-                      color: Colors.red
-                    ),
-                  ),
                 ),
               ),
               Container(
                 height: 50,
                 child: new CupertinoButton(
                   minSize: double.infinity,
-                  child: Text("登录",
-                    style: TextStyle(
-                      color: Colors.white,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  child: Center(
+                    child: Text("登录",
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                  color: Colors.blue,
                   onPressed: (){
                     _submit();
                     // _formKey.currentState.save();

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
 import 'package:loading_animations/loading_animations.dart';
+import 'package:toBetter/components/tapBox/index.dart';
 import '../../components/taskDetail/index.dart';
 import '../../components/checklog/index.dart';
 import '../../components/progressCircle/index.dart';
@@ -22,6 +23,8 @@ class _TaskDetail extends State {
 
   TypesTask detail;
 
+  int counter = 0;
+
   @override
   void initState() {
     super.initState();
@@ -35,11 +38,44 @@ class _TaskDetail extends State {
     final result = await Request.post(Urls.env + '/task/detail', {
       'taskId': taskId
     });
+    print(result);
     if (result != null && result['success'] == true) {
       setState(() {
         detail = TypesTask.fromMap(result['data']);
+        count = detail.count ?? 0;
+        counter = detail.counter;
       });
     }
+  }
+
+  trunCounter(off) async {
+    setState(() {
+      counter = off ? 1 : 0;
+    });
+    final result = await Request.post(Urls.env + '/task/edit', {
+      'taskId': detail.taskId,
+      'counter': off ? 1 : 0
+    });
+    if (result != null && result['success'] == true) {
+      _reload();
+    }
+  }
+
+  _deleteTak() async {
+    final result = await Request.post(Urls.env + '/task/delete', {
+      'taskId': detail.taskId
+    });
+    if (result != null && result['success'] == true) {
+      Navigator.pop(context, true);
+    }
+  }
+
+  _addCount (num) async {
+    final result = await Request.post(Urls.env + '/log/counter', {
+      'taskId': detail.taskId,
+      'type': 'counter',
+      'count': num
+    });
   }
 
   _reload() {
@@ -81,7 +117,7 @@ class _TaskDetail extends State {
     if (detail.status == 'fail' || detail.status == 'success') {
       lists.add(
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             CupertinoButton(
               child: Text('再来一次'),
@@ -98,7 +134,8 @@ class _TaskDetail extends State {
                     'punishment': detail.punishment,
                     'tag': detail.tag,
                     'tagColor': detail.tagInfo.color,
-                    'tagName': detail.tagInfo.name
+                    'tagName': detail.tagInfo.name,
+                    'counter': detail.counter
                   }
                 ).then((value) => {
                   if (value != null) {
@@ -107,6 +144,14 @@ class _TaskDetail extends State {
                 });
               },
               color: Colors.blue,
+              pressedOpacity: .5,
+            ),
+            CupertinoButton(
+              child: Text('删除目标'),
+              onPressed: (){
+                _deleteTak();
+              },
+              color: Colors.red,
               pressedOpacity: .5,
             )
           ],
@@ -162,6 +207,87 @@ class _TaskDetail extends State {
       );
     }
     final int preAllDays = detail.preAllDays ?? 0;
+    if (detail.counter == 1) {
+      lists.add(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Container(
+              child: Text(
+                (count ?? 0).toString(),
+                style: TextStyle(
+                  fontSize: 40,
+                  color: Colors.green
+                ),
+              ),
+            ),
+            TapBox(
+              onTap: () {
+                setState(() {
+                  count = count + 1;
+                  _addCount(count);
+                });
+              },
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: Colors.blue,
+                ),
+                child: Center(
+                  child: Text(
+                    '增加',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        )
+      );
+    } else {
+      lists.add(
+        Row(
+          children: [
+            Container(
+              width: 100,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                child: Text(
+                  '开启计数',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black
+                  ),
+                ),
+              )
+            ),
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(4, 0, 4, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CupertinoSwitch(
+                      value: counter == 1,
+                      onChanged: (onOff) {
+                        trunCounter(onOff);
+                      },
+                      activeColor: Colors.green,
+                    )
+                  ],
+                )
+              ),
+            )
+          ],
+        )
+      );
+    }
     lists.add(
       new Container(
         child: new Column(
@@ -201,7 +327,9 @@ class _TaskDetail extends State {
         CheckLog(
           checkTime: item.checkTime,
           remark: item.remark,
-          type: item.type
+          type: item.type,
+          count: item.count,
+          changetime: item.changetime
         )
       );
     });

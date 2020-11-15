@@ -8,7 +8,9 @@ class TimePipeline extends StatelessWidget{
     this.date,
     this.time,
     this.status,
-    this.remark
+    this.remark,
+    this.count,
+    this.changetime
   }) : super(key: key);
 
   final String date;
@@ -19,8 +21,13 @@ class TimePipeline extends StatelessWidget{
 
   final String remark;
 
+  final int count;
+
+  final String changetime;
+
   @override
   Widget build(BuildContext context) {
+    print(status);
     return Container(
       child: Column(
         children: <Widget>[
@@ -108,7 +115,7 @@ class TimePipeline extends StatelessWidget{
                                           ),
                                           Container(
                                             child: Text(
-                                              remark,
+                                              status != 'counter' ? remark : count.toString(),
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 14,

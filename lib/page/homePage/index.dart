@@ -3,6 +3,7 @@ import 'package:flutter/Cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../components/tapBox/index.dart';
 import '../../components/listTaskItem/index.dart';
+import '../../components/rewardList/index.dart';
 import '../search/index.dart';
 import '../../types/index.dart';
 import '../../components/pageAnimation/index.dart';
@@ -20,6 +21,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<TypesTask> _tasks = [];
 
+  List<dynamic> rewardList = [];
+
   int tagId;
 
   String currentStatus = 'nosign';
@@ -33,6 +36,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getList() async {
+    if (status == 'reward') {
+      getRewardList();
+      return;
+    }
     final Map<String, dynamic> params = {
       'tag': tagId
     };
@@ -52,6 +59,23 @@ class _HomePageState extends State<HomePage> {
         _tasks = lists;
       });
     }
+    
+  }
+
+  getRewardList() async {
+    final Map<String, dynamic> params = {
+      'tagId': tagId
+    };
+    final result = await Request.post(Urls.env + '/task/rewardList', params);
+    if (result != null && result['success'] == true) {
+      final lists = result['data'];
+      setState(() {
+        rewardList = lists;
+      });
+    }
+  }
+
+  getCounterList() async {
   }
 
   _showTags() {
@@ -233,6 +257,29 @@ class _HomePageState extends State<HomePage> {
                           ),
                         )
                       ),
+                      TapBox(
+                        onTap: () {
+                          setState(() {
+                            status = 'reward';
+                            currentStatus = null;
+                          });
+                          _getList();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+                          margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                          decoration: new BoxDecoration(
+                            color: status == 'reward' ? Colors.blue : Colors.transparent,
+                            borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                          ),
+                          child: Text(
+                            '赏罚表',
+                            style: TextStyle(
+                              color: status == 'reward' ? Colors.white : Colors.blue,
+                            ),
+                          ),
+                        )
+                      )
                     ],
                   ),
                 ),
@@ -260,11 +307,16 @@ class _HomePageState extends State<HomePage> {
                   onRefresh: () async {
                     _getList();
                   },
-                  child: new ListView(
+                  child: status != 'reward' ? new ListView(
                     padding: const EdgeInsets.all(8),
                     children: lists.length > 0 ? lists : [
                       Center(child: Text('没有数据'),)
                     ],
+                  ) : RewardListCom(
+                    reward: rewardList,
+                    reload: () {
+                      getRewardList();
+                    },
                   )
                 ),
               ),
@@ -276,6 +328,26 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.fromLTRB(0, 40, 0, 40),
           child: ListView(
             children: <Widget>[
+              TapBox(
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).pushNamed('/rewardList');
+                },
+                child: Container(
+                  child: Card(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
+                          child: Row(
+                            children: <Widget>[Icon(Icons.history), Text('赏罚列表')],
+                          )
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               TapBox(
                 onTap: () {
                   Navigator.pop(context);
@@ -325,31 +397,31 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.pop(context);
                   showDialog(
-                  context: context,
-                  builder: (ctx) {
-                    return CupertinoAlertDialog(
-                      title: Text('提示'),
-                      content:Text('是否确定退出登录？'),
-                      actions:<Widget>[
-                        CupertinoDialogAction(
-                          child: Text('是'),
-                          onPressed: (){
-                            Navigator.of(context).pop();
-                            Request.clearToken();
-                            Provider.of<LoginModal>(context, listen: false).changeStatus(false);
-                          },
-                        ),
-                    
-                        CupertinoDialogAction(
-                          child: Text('否'),
-                          onPressed: (){
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
+                    context: context,
+                    builder: (ctx) {
+                      return CupertinoAlertDialog(
+                        title: Text('提示'),
+                        content:Text('是否确定退出登录？'),
+                        actions:<Widget>[
+                          CupertinoDialogAction(
+                            child: Text('是'),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                              Request.clearToken();
+                              Provider.of<LoginModal>(context, listen: false).changeStatus(false);
+                            },
+                          ),
+                      
+                          CupertinoDialogAction(
+                            child: Text('否'),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: Container(
                   child: Card(

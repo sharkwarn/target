@@ -10,6 +10,10 @@ import '../../theme/colorsSetting.dart';
 import '../../types/index.dart';
 
 
+import '../../utils/request/index.dart';
+import '../../config.dart';
+
+
 class ListTaskItem extends StatefulWidget {
 
   ListTaskItem({
@@ -63,6 +67,15 @@ class _ListTaskItem extends State<ListTaskItem> {
     super.initState();
   }
 
+  _deleteTak() async {
+    final result = await Request.post(Urls.env + '/task/delete', {
+      'taskId': widget.taskId
+    });
+    if (result != null && result['success'] == true && widget.reload != null) {
+      widget.reload();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final String title = widget.title;
@@ -78,21 +91,22 @@ class _ListTaskItem extends State<ListTaskItem> {
     String status = widget.status;
     Color taskStatusColor;
     String taskStatus;
+    int completedDay = widget.completedDay > allDays ? allDays : widget.completedDay;
     switch (status) {
       case 'ongoing':
-        taskStatus = (widget.completedDay ?? 0).toString();
+        taskStatus = (completedDay ?? 0).toString();
         taskStatusColor = ColorsUtil.hexStringColor(tagColor);
         break;
       case 'willStart':
-        taskStatus = '明天开始 ' + widget.completedDay.toString();
+        taskStatus = '明天开始 ' + completedDay.toString();
         taskStatusColor = ColorsUtil.hexStringColor(tagColor);
         break;
       case 'success':
-        taskStatus = '完成 ' + widget.completedDay.toString();
+        taskStatus = '完成 ' + completedDay.toString();
         taskStatusColor = Colors.green[300];
         break;
       case 'fail':
-        taskStatus = '失败 ' + widget.completedDay.toString();
+        taskStatus = '失败 ' + completedDay.toString();
         taskStatusColor = Colors.red[300];
         break;
       default:
@@ -150,7 +164,54 @@ class _ListTaskItem extends State<ListTaskItem> {
                       Offstage(
                         child: TapBox(
                           onTap: () {
-                            Navigator.of(context).pushNamed('/checktask', arguments: widget.taskId).then((value) => {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) {
+                                return CupertinoAlertDialog(
+                                  title: Text('提示'),
+                                  content:Text('确定删除该任务？'),
+                                  actions:<Widget>[
+                                    CupertinoDialogAction(
+                                      child: Text('是'),
+                                      onPressed: (){
+                                        Navigator.of(context).pop();
+                                        _deleteTak();
+                                      },
+                                    ),
+                                
+                                    CupertinoDialogAction(
+                                      child: Text('否'),
+                                      onPressed: (){
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.red,
+                            ),
+                            child: Text(
+                              '删除',
+                              style: new TextStyle(
+                                  color: Colors.white,
+                              )
+                            ),
+                          ),
+                        ),
+                        offstage: !(status == 'fail' || status == 'success'),
+                      ),
+                      Offstage(
+                        child: TapBox(
+                          onTap: () {
+                            Navigator.of(context).pushNamed('/checktask', arguments: {
+                              'taskId': widget.taskId
+                            }).then((value) => {
                               if (value == true && widget.reload != null) {
                                 widget.reload()
                               }

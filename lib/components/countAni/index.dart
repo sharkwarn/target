@@ -48,7 +48,11 @@ class _CountAni extends State<CountAni> with SingleTickerProviderStateMixin {
     @override
   Widget build(BuildContext context) {
     return Text(
-      (animation.value~/1).toString()
+      (animation.value~/1).toString(),
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 16
+      ),
     );
   }
 

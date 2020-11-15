@@ -102,7 +102,7 @@ class _CreateTags extends State<CreateTags> {
                       }
                       return null;
                     },
-                    controller: new TextEditingController(text: widget.name),
+                    initialValue: widget.name,
                     onSaved: (val) {
                       name = val;
                     },

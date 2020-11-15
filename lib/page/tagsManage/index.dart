@@ -49,6 +49,15 @@ class _TagsManage extends State {
     });
   }
 
+  _delete(tagId) async {
+    final result = await Request.post(Urls.env + '/tag/delete', {
+      'tagId': tagId
+    });
+    if (result != null && result['success'] == true) {
+      _getList();
+    }
+  }
+
   _editeTag(Tag tag) async {
     Navigator.push(context, SlideTopRoute(
       page: CreateTags(
@@ -68,38 +77,82 @@ class _TagsManage extends State {
     final List<Widget> lists = tags.map<Widget>((item) {
       final String name = item.name;
       final String color = item.color;
-      return Container(
-        width: MediaQuery.of(context).size.width * 0.50,
-        height: 64,
-        padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
-        child: TapBox(
-          onTap: () => {
-            _editeTag(item)
-          },
-          child: Container(
-            decoration: new BoxDecoration(
-              //背景
-              color: ColorsUtil.hexStringColor(color),
-              //设置四周圆角 角度
-              borderRadius: BorderRadius.all(Radius.circular(4.0)),
-              //设置四周边框
-              // border: new Border.all(width: 1, color: Colors.red),
-            ),
-            height: 88,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.white,
-                  )
-                )
-              ],
-            ),
+      return Stack(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width * 0.50,
+            height: 64,
+            padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
+            child: TapBox(
+              onTap: () => {
+                _editeTag(item)
+              },
+              child: Container(
+                decoration: new BoxDecoration(
+                  //背景
+                  color: ColorsUtil.hexStringColor(color),
+                  //设置四周圆角 角度
+                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                  //设置四周边框
+                  // border: new Border.all(width: 1, color: Colors.red),
+                ),
+                height: 88,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.white,
+                      )
+                    )
+                  ],
+                ),
+              ),
+            )
           ),
-        )
+          Positioned(
+            right: 20,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              child: TapBox(
+                onTap: () => {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) {
+                      return CupertinoAlertDialog(
+                        title: Text('提示'),
+                        content:Text('删除标签后，绑定的任务也会删除，是否确定删除标签？'),
+                        actions:<Widget>[
+                          CupertinoDialogAction(
+                            child: Text('是'),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                              _delete(item.tagId);
+                            },
+                          ),
+                      
+                          CupertinoDialogAction(
+                            child: Text('否'),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  )
+                },
+                child: Icon(
+                  Icons.delete_outline,
+                  color: Colors.white
+                )
+              )
+            )
+          )
+        ]
       );
     }).toList();
     return new Scaffold(

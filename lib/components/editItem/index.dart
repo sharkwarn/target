@@ -59,8 +59,15 @@ class _EditItem extends State<EditItem> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Container(
-                  child: Text(widget.label + ':' + widget.value),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    child: Wrap(
+                      children: [
+                        Text(widget.label + ':' + widget.value)
+                      ],
+                    ),
+                  ),
                 ),
                 Container(
                   child: CupertinoButton(
@@ -78,16 +85,28 @@ class _EditItem extends State<EditItem> {
           Offstage(
             offstage: !editing,
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+                Container(
+                  child: Text(widget.label)
+                ),
                 Expanded(
                   flex: 1,
                   child: Container(
-                    height: 30,
                     constraints: BoxConstraints(maxWidth: 160),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1,
+                            color: Color(0xffe5e5e5)
+                          )
+                        ),
+                      ),
                     child: TextField(
                       keyboardType: TextInputType.text,
                       autofocus: false,
+                      maxLines: widget.valueKey == 'reward' || widget.valueKey == 'punishment' ? 5 : null,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
