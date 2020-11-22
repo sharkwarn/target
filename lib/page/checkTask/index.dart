@@ -158,7 +158,7 @@ class _CheckTask extends State<CheckTask> {
                       color: Colors.white,
                     ),
                   ),
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                   onPressed: (){
                     if (_formKey.currentState.validate()) {
                       // Process data.

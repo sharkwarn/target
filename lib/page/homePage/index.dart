@@ -177,13 +177,13 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
                           margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                           decoration: new BoxDecoration(
-                            color: currentStatus == 'nosign' ? Colors.blue : Colors.transparent,
+                            color: currentStatus == 'nosign' ? Theme.of(context).primaryColor : Colors.transparent,
                             borderRadius: BorderRadius.all(Radius.circular(4.0)),
                           ),
                           child: Text(
                             '未签到',
                             style: TextStyle(
-                              color: currentStatus == 'nosign' ? Colors.white : Colors.blue,
+                              color: currentStatus == 'nosign' ? Colors.white : Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
@@ -200,13 +200,13 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
                           margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                           decoration: new BoxDecoration(
-                            color: currentStatus == 'done' ? Colors.blue : Colors.transparent,
+                            color: currentStatus == 'done' ? Theme.of(context).primaryColor : Colors.transparent,
                             borderRadius: BorderRadius.all(Radius.circular(4.0)),
                           ),
                           child: Text(
                             '已签到',
                             style: TextStyle(
-                              color: currentStatus == 'done' ? Colors.white : Colors.blue,
+                              color: currentStatus == 'done' ? Colors.white : Theme.of(context).primaryColor,
                             ),
                           ),
                         )
@@ -223,13 +223,13 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
                           margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                           decoration: new BoxDecoration(
-                            color: status == 'success' ? Colors.blue : Colors.transparent,
+                            color: status == 'success' ? Theme.of(context).primaryColor : Colors.transparent,
                             borderRadius: BorderRadius.all(Radius.circular(4.0)),
                           ),
                           child: Text(
                             '已完成',
                             style: TextStyle(
-                              color: status == 'success' ? Colors.white : Colors.blue,
+                              color: status == 'success' ? Colors.white : Theme.of(context).primaryColor,
                             ),
                           ),
                         )
@@ -246,13 +246,13 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
                           margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                           decoration: new BoxDecoration(
-                            color: status == 'fail' ? Colors.blue : Colors.transparent,
+                            color: status == 'fail' ? Theme.of(context).primaryColor : Colors.transparent,
                             borderRadius: BorderRadius.all(Radius.circular(4.0)),
                           ),
                           child: Text(
                             '已失败',
                             style: TextStyle(
-                              color: status == 'fail' ? Colors.white : Colors.blue,
+                              color: status == 'fail' ? Colors.white : Theme.of(context).primaryColor,
                             ),
                           ),
                         )
@@ -269,13 +269,13 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
                           margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                           decoration: new BoxDecoration(
-                            color: status == 'reward' ? Colors.blue : Colors.transparent,
+                            color: status == 'reward' ? Theme.of(context).primaryColor : Colors.transparent,
                             borderRadius: BorderRadius.all(Radius.circular(4.0)),
                           ),
                           child: Text(
                             '赏罚表',
                             style: TextStyle(
-                              color: status == 'reward' ? Colors.white : Colors.blue,
+                              color: status == 'reward' ? Colors.white : Theme.of(context).primaryColor,
                             ),
                           ),
                         )
@@ -293,7 +293,7 @@ class _HomePageState extends State<HomePage> {
                       '筛选',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.blue
+                        color: Theme.of(context).primaryColor
                       )
                     )
                   ),
@@ -352,11 +352,6 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.of(context).pushNamed('/tagsManage');
-                  // .then((value) => {
-                  //   if (value == 'create') {
-                  //     _getList()
-                  //   }
-                  // });
                 },
                 child: Container(
                   child: Card(
@@ -366,6 +361,26 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
                           child: Row(
                             children: <Widget>[Icon(Icons.menu), Text('标签管理')],
+                          )
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              TapBox(
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).pushNamed('/timeline');
+                },
+                child: Container(
+                  child: Card(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.fromLTRB(8, 6, 8, 6),
+                          child: Row(
+                            children: <Widget>[Icon(Icons.list), Text('时间轴')],
                           )
                         )
                       ],

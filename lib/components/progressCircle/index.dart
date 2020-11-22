@@ -33,7 +33,7 @@ class ProgressCircle extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
       ..color = Colors.green
-      ..shader = ui.Gradient.sweep(Offset(100, 100), [Colors.red, Colors.blue]);
+      ..shader = ui.Gradient.sweep(Offset(100, 100), [Colors.red, Color(0xFF2FC4B2)]);
     canvas.drawLine(new Offset(startX, startY), new Offset(endX, endY), paint);
   }
 

@@ -135,7 +135,7 @@ class _SignIn extends State<SignIn> {
     double itemHeight = 50;
     return new Scaffold(
         appBar: new AppBar(
-          backgroundColor: Color(0xFF24C0CB),
+          backgroundColor: Theme.of(context).primaryColor,
           elevation: 0,
           title: new Text(
             '注册',
@@ -145,7 +145,7 @@ class _SignIn extends State<SignIn> {
             ),
           )
         ),
-        backgroundColor: Color(0xFF24C0CB),
+        backgroundColor: Theme.of(context).primaryColor,
         body: Container(
           padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
           child: new Column(
@@ -363,7 +363,7 @@ class _SignIn extends State<SignIn> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
                   child: Center(
-                    child: Text("登录",
+                    child: Text("注册",
                       style: TextStyle(
                         color: Colors.black,
                       ),

@@ -125,7 +125,7 @@ class _ListTaskItem extends State<ListTaskItem> {
         break;
       default:
         currentStatus = ' ';
-        currentStatusColor = Colors.blue;
+        currentStatusColor = Theme.of(context).primaryColor;
         break;
     }
     return new Container(

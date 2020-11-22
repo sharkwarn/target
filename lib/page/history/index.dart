@@ -124,7 +124,7 @@ class _History extends State<History> {
                     '筛选',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.blue
+                      color: Theme.of(context).primaryColor
                     )
                   )
                 ),

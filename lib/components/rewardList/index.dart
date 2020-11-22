@@ -141,7 +141,7 @@ class _RewardListCom extends State<RewardListCom> {
                               margin: EdgeInsets.fromLTRB(0, 0, 3, 0),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: rewardstatus == 1 || rewardstatus == null ? Colors.blue : Colors.grey,
+                                color: rewardstatus == 1 || rewardstatus == null ? Theme.of(context).primaryColor : Colors.grey,
                               ),
                               child: Center(
                                 child: Text(
@@ -224,7 +224,7 @@ class _RewardListCom extends State<RewardListCom> {
                               margin: EdgeInsets.fromLTRB(0, 0, 3, 0),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: rewardstatus == 3 || rewardstatus == null ? Colors.blue : Colors.grey,
+                                color: rewardstatus == 3 || rewardstatus == null ? Theme.of(context).primaryColor : Colors.grey,
                               ),
                               child: Center(
                                 child: Text(

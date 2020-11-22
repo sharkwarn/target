@@ -143,7 +143,7 @@ class _TaskDetail extends State {
                   }
                 });
               },
-              color: Colors.blue,
+              color: Theme.of(context).primaryColor,
               pressedOpacity: .5,
             ),
             CupertinoButton(
@@ -173,7 +173,7 @@ class _TaskDetail extends State {
                   }
                 });
               },
-              color: Colors.blue,
+              color: Theme.of(context).primaryColor,
               pressedOpacity: .5,
             ),
             CupertinoButton(
@@ -233,7 +233,7 @@ class _TaskDetail extends State {
                 height: 60,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: Colors.blue,
+                  color: Theme.of(context).primaryColor,
                 ),
                 child: Center(
                   child: Text(

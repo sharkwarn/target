@@ -8,6 +8,7 @@ import '../../components/tapBox/index.dart';
 import '../../utils/request/index.dart';
 import '../../components/countAni/index.dart';
 import '../../components/toast/index.dart';
+import '../../ani/wave/index.dart';
 import '../../config.dart';
 
 
@@ -149,12 +150,13 @@ class _Login extends State<Login> {
       color: Color(0X80FFFFFF)
     );
     return new Scaffold(
-        backgroundColor: Color(0xFF24C0CB),
+        backgroundColor: Theme.of(context).primaryColor,
         body: Container(
           padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              AniWave(),
               Container(
                 margin: EdgeInsets.fromLTRB(0, 200, 0, 0),
                 padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
@@ -426,7 +428,7 @@ class _Login extends State<Login> {
                   },
                   pressedOpacity: 0.7,
                 )
-              )
+              ),
             ]
           ),
         )

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/Cupertino.dart';
-import 'package:provider/provider.dart';
 import '../../components/tapBox/index.dart';
 import '../../utils/colorsUtil.dart';
 import '../../components/pageAnimation/index.dart';
@@ -92,7 +91,7 @@ class _RewardList extends State<RewardList> {
                       '筛选',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.blue
+                        color: Theme.of(context).primaryColor
                       )
                     )
                   ),
@@ -200,7 +199,7 @@ class _RewardList extends State<RewardList> {
                                             margin: EdgeInsets.fromLTRB(0, 0, 3, 0),
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(20),
-                                              color: rewardstatus == 1 || rewardstatus == null ? Colors.blue : Colors.grey,
+                                              color: rewardstatus == 1 || rewardstatus == null ? Theme.of(context).primaryColor : Colors.grey,
                                             ),
                                             child: Center(
                                               child: Text(
@@ -283,7 +282,7 @@ class _RewardList extends State<RewardList> {
                                             margin: EdgeInsets.fromLTRB(0, 0, 3, 0),
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(20),
-                                              color: rewardstatus == 3 || rewardstatus == null ? Colors.blue : Colors.grey,
+                                              color: rewardstatus == 3 || rewardstatus == null ? Theme.of(context).primaryColor : Colors.grey,
                                             ),
                                             child: Center(
                                               child: Text(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
+import './route.dart';
+
 import './page/homePage/index.dart';
 import './page/createTask/index.dart';
 import './page/taskDetail/index.dart';
@@ -12,12 +14,14 @@ import './page/login/index.dart';
 import './page/startPage/index.dart';
 import './page/rewardList/index.dart';
 import './page/signIn/index.dart';
+import './page/redictLogin/index.dart';
+import './page/timeLine/index.dart';
 
 import './modal/count.dart';
 import './modal/login.dart';
 
 import './utils/request/index.dart';
-void main() {
+void main() async {
 
   runApp(
     MultiProvider(
@@ -81,7 +85,10 @@ class _App extends State<App> {
 
     if (!_login.value) {
       return MaterialApp(
-        title: 'Flutter Demo',
+        title: ' ',
+        theme: ThemeData(
+          primaryColor: Theme.of(context).primaryColor,
+        ),
         home: Login(
           callBack: () {
             setState(() {
@@ -104,14 +111,16 @@ class _App extends State<App> {
             brightness: Brightness.light
         ),
       ),
+      navigatorKey: GloabalRouter.navigatorKey,
       routes: <String, WidgetBuilder> {
-        '/login': (BuildContext context) => new Login(),
+        '/redictLogin': (BuildContext context) => new RedictLogin(),
         '/create': (BuildContext context) => new CreateTask(),
         '/detail': (BuildContext context) => new TaskDetail(),
         '/checktask': (BuildContext context) => new CheckTask(),
         '/tagsManage': (BuildContext context) => new TagsManage(),
         '/history': (BuildContext context) => new History(),
-        '/rewardList': (BuildContext context) => new RewardList()
+        '/rewardList': (BuildContext context) => new RewardList(),
+        '/timeline': (BuildContext context) => new TimeLine()
       },
     );
   }

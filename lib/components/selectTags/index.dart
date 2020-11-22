@@ -96,7 +96,7 @@ class _SelectTags extends State<SelectTags> {
                 //设置四周圆角 角度
                 borderRadius: BorderRadius.all(Radius.circular(4.0)),
                 //设置四周边框
-                border: new Border.all(width: 1, color: Colors.blue),
+                border: new Border.all(width: 1, color: Theme.of(context).primaryColor),
               ),
               height: 88,
               child: Row(
@@ -106,7 +106,7 @@ class _SelectTags extends State<SelectTags> {
                     '全部',
                     style: TextStyle(
                       fontSize: 18.0,
-                      color: Colors.blue,
+                      color: Theme.of(context).primaryColor,
                     )
                   )
                 ],

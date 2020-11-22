@@ -712,12 +712,12 @@ class _CreateTask extends State<CreateTask> {
                           children: <Widget>[
                             new Container(
                               padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
-                              color: Colors.blue[50],
+                              color: Theme.of(context).primaryColor,
                               child: new Row(
                                 children: <Widget>[
                                   new Icon(
                                     Icons.warning,
-                                    color: Colors.blue,
+                                    color: Theme.of(context).primaryColor,
                                   ),
                                   new Text('请了解详细规则!')
                                 ]
@@ -766,7 +766,7 @@ class _CreateTask extends State<CreateTask> {
                     color: Colors.white,
                   ),
                 ),
-                color: Colors.blue,
+                color: Theme.of(context).primaryColor,
                 onPressed: (){
                   _formKey.currentState.save();
                   if (checkForm()) {

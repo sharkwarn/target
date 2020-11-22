@@ -94,3 +94,20 @@ on a.tag = b.tagId;
 ```
 
 
+
+
+
+
+### 今天执行的命令
+
+```sql
+ALTER TABLE `user_test_task` modify column `fine` FLOAT(9, 2) DEFAULT 0 COMMENT '惩罚'
+
+
+ALTER TABLE `user_test_log` add (
+	userid int(30) PRIMARY KEY not null COMMENT '用户id'
+)
+
+update `user_test_log` A, `user_test_task` B set A.userid = B.`userid` WHERE A.`taskId`  = B.`taskId`
+
+```

@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../modal/login.dart';
 import '../../config.dart';
+import '../../route.dart';
 
 class Request {
 
@@ -115,11 +118,15 @@ class Request {
   
 
   static post (String url, Map<String, dynamic> params) async {
+    print(LoginModal);
     try {
       Response response = await httpRequest.post(
         url,
         data: params
       );
+      if (response.data['code'] == 2) {
+        GloabalRouter.navigatorKey.currentState.pushNamedAndRemoveUntil("/redictLogin", ModalRoute.withName("/"));
+      }
       return response.data;
     } catch (e) {
       print(e);
