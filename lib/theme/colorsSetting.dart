@@ -125,6 +125,7 @@ final Map<String, Color> statusColors = {
   'create': Color(0xFF2FC4B2),
   'restart': Color(0xFF2FC4B2),
   'done': Color(0xFFFF9B00),
+  'success': Color(0xFFFF9B00),
   'fail': Color(0xFFFF9B00),
   'stop': Color(0xFFFF9B00),
   'delete': Color(0xFFFF9B00),
@@ -146,3 +147,38 @@ final Map<String, String> statusDesc = {
   'autoHoliday': '系统自动休假',
   'counter': '计数'
 };
+
+final List<Map<String, dynamic>> statusList = [
+  {
+    'name': statusDesc['sign'],
+    'color': statusColors['sign']
+  },
+  {
+    'name': statusDesc['holiday'],
+    'color': statusColors['holiday']
+  },
+  {
+    'name': statusDesc['create'],
+    'color': statusColors['create']
+  },
+  {
+    'name': statusDesc['restart'],
+    'color': statusColors['restart']
+  },
+  {
+    'name': statusDesc['success'],
+    'color': statusColors['success']
+  },
+  {
+    'name': statusDesc['fail'],
+    'color': statusColors['fail']
+  },
+  {
+    'name': statusDesc['autoHoliday'],
+    'color': statusColors['autoHoliday']
+  },
+  {
+    'name': statusDesc['counter'],
+    'color': statusColors['counter']
+  }
+];

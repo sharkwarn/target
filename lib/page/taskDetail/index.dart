@@ -6,7 +6,6 @@ import 'package:loading_animations/loading_animations.dart';
 import 'package:toBetter/components/tapBox/index.dart';
 import '../../components/taskDetail/index.dart';
 import '../../components/checklog/index.dart';
-import '../../components/progressCircle/index.dart';
 import '../../types/index.dart';
 import '../../utils/colorsUtil.dart';
 import '../../utils/request/index.dart';

@@ -1,13 +1,14 @@
 // 历史时间轴
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import '../../utils/request/index.dart';
+import '../../config.dart';
+import '../../theme/colorsSetting.dart';
 
 
 
 class TimeLine extends StatefulWidget {
-
 
   _Timeline createState() => _Timeline();
 }
@@ -16,35 +17,41 @@ class TimeLine extends StatefulWidget {
 class _Timeline extends State<TimeLine> {
 
   String _selectedDate;
-  String _dateCount;
-  String _range;
-  String _rangeCount;
+
+  List showList;
+
+  List allList;
+  
   
   @override
   void initState() {
-    _selectedDate = '';
-    _dateCount = '';
-    _range = '';
-    _rangeCount = '';
+    _selectedDate = transformDate(DateTime.now());
     super.initState();
+    _getTimeLine(transformDate(DateTime.now()));
+  }
+
+  String transformDate(DateTime value) {
+    String year = value.year.toString();
+    String month = value.month > 9 ? value.month.toString() : '0' + value.month.toString();
+    String day = value.day > 9 ? value.day.toString() : '0' + value.day.toString();
+    return year + '-' + month + '-' + day;
+  }
+
+  _getTimeLine(String time) async {
+    final result = await Request.post(Urls.env + '/log/getTimeLine', {
+      'time': time
+    });
+    print(result);
+    if (result != null && result['success'] == true) {
+      
+    }
   }
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
+    String a = transformDate(args.value);
+    _getTimeLine(a);
     setState(() {
-      if (args.value is PickerDateRange) {
-        _range =
-            DateFormat('dd/MM/yyyy').format(args.value.startDate).toString() +
-                ' - ' +
-                DateFormat('dd/MM/yyyy')
-                    .format(args.value.endDate ?? args.value.startDate)
-                    .toString();
-      } else if (args.value is DateTime) {
-        _selectedDate = args.value;
-      } else if (args.value is List<DateTime>) {
-        _dateCount = args.value.length.toString();
-      } else {
-        _rangeCount = args.value.length.toString();
-      }
+      _selectedDate = a;
     });
   }
 
@@ -63,16 +70,50 @@ class _Timeline extends State<TimeLine> {
               initialSelectedDate: DateTime.now(),
               maxDate: DateTime.now(),
               onSelectionChanged: _onSelectionChanged,
-              selectionMode: DateRangePickerSelectionMode.single,
-              initialSelectedRange: PickerDateRange(
-                  DateTime.now().subtract(const Duration(days: 4)),
-                  DateTime.now().add(const Duration(days: 3))),
+              selectionMode: DateRangePickerSelectionMode.single
             ),
           ),
           Expanded(
             flex: 1,
             child: Container(
-              color: Colors.blue,
+              child: Row(
+                children: [
+                  Container(
+                    width: 70,
+                    child: ListView.builder(
+                      itemCount: statusList.length,
+                      itemBuilder: (BuildContext context,int index) {
+                        return Container(
+                          width: 70,
+                          height: 70,
+                          color: statusList[index]['color'],
+                          child: Center(
+                            child: Text(statusList[index]['name']),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      child: ListView.builder(
+                        itemCount: statusList.length,
+                        itemBuilder: (BuildContext context,int index) {
+                          return Container(
+                            width: 70,
+                            height: 70,
+                            color: statusList[index]['color'],
+                            child: Center(
+                              child: Text(statusList[index]['name']),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           )
         ]
